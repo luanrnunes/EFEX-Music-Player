@@ -5,3 +5,7 @@
 .label {
 	-fx-font-size: 15;
 }
+
+.play-button {
+	-fx-graphic: url('https://icons.iconarchive.com/icons/hopstarter/soft-scraps/256/Button-Play-icon.png');
+}
