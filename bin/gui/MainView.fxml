@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainViewController">
+<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="449.0" prefWidth="687.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainViewController">
    <content>
-      <VBox prefHeight="360.0" prefWidth="522.0">
+      <VBox prefHeight="431.0" prefWidth="671.0">
          <children>
             <MenuBar>
               <menus>
                 <Menu fx:id="menuItemFile" mnemonicParsing="false" text="Player">
                   <items>
-                    <MenuItem fx:id="menuItemSeller" mnemonicParsing="false" onAction="#onMenuItemFileAction" text="Seller" />
-                        <MenuItem fx:id="menuItemDepartment" mnemonicParsing="false" onAction="#onMenuItemConfig" text="Department" />
+                    <MenuItem fx:id="menuItemSeller" mnemonicParsing="false" onAction="#onMenuItemFileAction" text="Equalizer" />
+                        <MenuItem fx:id="menuItemDepartment" mnemonicParsing="false" onAction="#onMenuItemConfig" text="Advanced Audio Options" />
                   </items>
                 </Menu>
                   <Menu fx:id="menuItemConfig" mnemonicParsing="false" text="Config">
@@ -30,6 +35,46 @@
                 </Menu>
               </menus>
             </MenuBar>
+            <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Button fx:id="playListButton" mnemonicParsing="false" onAction="#onbtPlaylistAction" text="PLAYLIST">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
+            <Label fx:id="actionStatus" textFill="#f50505">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <VBox.margin>
+                  <Insets left="500.0" />
+               </VBox.margin>
+            </Label>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <VBox.margin>
+                  <Insets top="300.0" />
+               </VBox.margin>
+               <children>
+                  <Button fx:id="playButton" mnemonicParsing="false" onAction="#onbtPlayButtonAction" text="PLAY">
+                     <HBox.margin>
+                        <Insets left="100.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="stopButton" mnemonicParsing="false" onAction="#onbtStopButtonAction" text="STOP">
+                     <HBox.margin>
+                        <Insets left="300.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
          </children>
       </VBox>
    </content>

@@ -9,3 +9,7 @@
 .play-button {
 	-fx-graphic: url('https://icons.iconarchive.com/icons/hopstarter/soft-scraps/256/Button-Play-icon.png');
 }
+
+.play-button:selected {
+	-fx-graphic: url("https://icons.iconarchive.com/icons/hopstarter/button/256/Button-Play-icon.png");
+}
