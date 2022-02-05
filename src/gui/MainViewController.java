@@ -6,6 +6,10 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
+
 import application.Main;
 import gui.util.Alerts;
 import javafx.fxml.FXML;
@@ -47,6 +51,8 @@ public class MainViewController implements Initializable {
 	
 	@FXML
 	private Label actionStatus;
+	
+	private String fullPath;
 
 	@FXML
 	public void onMenuItemFileAction() {
@@ -65,10 +71,12 @@ public class MainViewController implements Initializable {
 
 	@FXML
 	public void onbtPlayButtonAction() {
-		loadView("/gui/About.fxml", x -> {
-			System.out.println("ok");
-		});
-	}
+		
+		String selectedAudio = fullPath;
+		Media hit = new Media(new File(selectedAudio).toURI().toString());
+		MediaPlayer mediaPlayer = new MediaPlayer(hit);
+		mediaPlayer.play();
+		}
 	
 	@FXML
 	public void onbtStopButtonAction() {
@@ -82,6 +90,13 @@ public class MainViewController implements Initializable {
 		
 		FileChooser fileChooser = new FileChooser();
 		File selectedFile = fileChooser.showOpenDialog(null);
+		try {
+			fullPath = selectedFile.getCanonicalPath();
+			System.out.println(fullPath);
+		} catch (IOException e) {
+			
+			actionStatus.setText("Failed getting file path: "+e);
+		}
 		 
 		if (selectedFile != null) {
 		 
