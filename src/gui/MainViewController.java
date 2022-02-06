@@ -53,6 +53,7 @@ public class MainViewController implements Initializable {
 	private Label actionStatus;
 	
 	private String fullPath;
+	
 
 	@FXML
 	public void onMenuItemFileAction() {
@@ -70,6 +71,7 @@ public class MainViewController implements Initializable {
 	}
 
 	@FXML
+	MediaPlayer mediaPlayer;
 	public void onbtPlayButtonAction() {
 		
 		String selectedAudio = fullPath;
@@ -81,8 +83,10 @@ public class MainViewController implements Initializable {
 	@FXML
 	public void onbtStopButtonAction() {
 		
-			System.out.println("ok");
-		
+	if (mediaPlayer != null) {
+		mediaPlayer.stop();
+		mediaPlayer.dispose();
+	}
 	}
 	
 	@FXML
@@ -100,7 +104,7 @@ public class MainViewController implements Initializable {
 		 
 		if (selectedFile != null) {
 		 
-		    actionStatus.setText("File selected: " + selectedFile.getName());
+		    actionStatus.setText("Now playing: " + selectedFile.getName());
 		}
 		else {
 		    actionStatus.setText("File selection cancelled.");
