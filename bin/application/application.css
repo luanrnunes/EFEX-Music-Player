@@ -1,5 +1,5 @@
-.mainScene {
-	-fx-background-color: #111111;
+.scroll-pane {
+   -fx-background-color: transparent;
 }
 
 .label {

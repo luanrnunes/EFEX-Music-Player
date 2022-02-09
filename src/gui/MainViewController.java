@@ -6,10 +6,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-
-
 import application.Main;
 import gui.util.Alerts;
 import javafx.fxml.FXML;
@@ -23,6 +19,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -47,12 +45,19 @@ public class MainViewController implements Initializable {
 	private Button playListButton;
 	
 	@FXML
+	private Button pauseButton;
+	
+	@FXML
 	private Stage stage;
 	
 	@FXML
 	private Label actionStatus;
 	
 	private String fullPath;
+	
+	private MediaPlayer mediaPlayer;
+	
+	private Media hit;
 	
 
 	@FXML
@@ -71,22 +76,32 @@ public class MainViewController implements Initializable {
 	}
 
 	@FXML
-	MediaPlayer mediaPlayer;
 	public void onbtPlayButtonAction() {
+		try {
 		
+		if (mediaPlayer == null) {
 		String selectedAudio = fullPath;
-		Media hit = new Media(new File(selectedAudio).toURI().toString());
-		MediaPlayer mediaPlayer = new MediaPlayer(hit);
+		hit = new Media(new File(selectedAudio).toURI().toString());
+		mediaPlayer = new MediaPlayer(hit);
 		mediaPlayer.play();
 		}
-	
+		else {
+			mediaPlayer.play();
+		}
+			}
+		catch(Exception e) {
+			actionStatus.setText("No song selected!");
+		}
+		
+	}
 	@FXML
 	public void onbtStopButtonAction() {
-		
-	if (mediaPlayer != null) {
 		mediaPlayer.stop();
-		mediaPlayer.dispose();
 	}
+	
+	@FXML
+	public void pauseButtonAction() {
+		mediaPlayer.pause();
 	}
 	
 	@FXML
@@ -97,6 +112,8 @@ public class MainViewController implements Initializable {
 		try {
 			fullPath = selectedFile.getCanonicalPath();
 			System.out.println(fullPath);
+
+		         
 		} catch (IOException e) {
 			
 			actionStatus.setText("Failed getting file path: "+e);
@@ -115,8 +132,9 @@ public class MainViewController implements Initializable {
 	
 	@FXML
 	public void onMenuItemAboutAction() {
-		loadView("/gui/About.fxml", x -> {
-			System.out.println("ok");
+		
+		loadView("/gui/AboutView.fxml", x -> {
+			
 		});
 	}
 

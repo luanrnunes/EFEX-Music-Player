@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="449.0" prefWidth="687.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainViewController">
+<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="517.0" prefWidth="905.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainViewController">
    <content>
       <VBox prefHeight="431.0" prefWidth="671.0">
          <children>
@@ -25,7 +25,7 @@
                 </Menu>
                   <Menu fx:id="menuItemConfig" mnemonicParsing="false" text="Config">
                     <items>
-                      <MenuItem mnemonicParsing="false" text="Action 1" />
+                      <MenuItem mnemonicParsing="false" text="Preferences" />
                     </items>
                   </Menu>
                 <Menu mnemonicParsing="false" text="Help">
@@ -44,20 +44,23 @@
                   </Button>
                </children>
             </HBox>
-            <Label fx:id="actionStatus" textFill="#000cf5">
+            <Label fx:id="actionStatus" textFill="#000dff">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
                <VBox.margin>
                   <Insets left="400.0" />
                </VBox.margin>
+               <font>
+                  <Font size="24.0" />
+               </font>
             </Label>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <VBox.margin>
                   <Insets top="300.0" />
                </VBox.margin>
                <children>
-                  <Button fx:id="playButton" mnemonicParsing="false" onAction="#onbtPlayButtonAction" text="PLAY">
+                  <Button fx:id="playButton" mnemonicParsing="false" onAction="#onbtPlayButtonAction" prefHeight="45.0" prefWidth="117.0" text="PLAY">
                      <HBox.margin>
                         <Insets left="100.0" />
                      </HBox.margin>
@@ -65,7 +68,8 @@
                         <Font size="20.0" />
                      </font>
                   </Button>
-                  <Button fx:id="stopButton" mnemonicParsing="false" onAction="#onbtStopButtonAction" text="STOP">
+                  <Button fx:id="pauseButton" mnemonicParsing="false" onAction="#pauseButtonAction" prefHeight="45.0" prefWidth="65.0" text="PAUSE" />
+                  <Button fx:id="stopButton" mnemonicParsing="false" onAction="#onbtStopButtonAction" prefHeight="44.0" prefWidth="79.0" text="STOP">
                      <HBox.margin>
                         <Insets left="300.0" />
                      </HBox.margin>
