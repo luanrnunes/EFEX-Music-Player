@@ -4,12 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.Timer;
 import java.util.function.Consumer;
 
 import application.Main;
 import gui.util.Alerts;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,12 +16,15 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -59,6 +60,14 @@ public class MainViewController implements Initializable {
 
 	@FXML
 	private Label mediaTime;
+	
+	@FXML
+	private TextField timesRepeat;
+	
+	@FXML
+	private CheckBox repeat;
+	
+	private Boolean repeatState = false;
 
 	private String fullPath;
 
@@ -67,8 +76,15 @@ public class MainViewController implements Initializable {
 	private Media hit;
 	
 	private String selectedAudio;
-
+	
+	private File selectedFile; 
+	
+	private String repeatset;
+	
+	private Integer repeatSetInt;
+	
 	private ChangeListener<Duration> TimeListener;
+	
 
 	@FXML
 	public void onMenuItemFileAction() {
@@ -94,47 +110,71 @@ public class MainViewController implements Initializable {
 				hit = new Media(new File(selectedAudio).toURI().toString());
 				mediaPlayer = new MediaPlayer(hit);
 				mediaPlayer.play();
+				actionStatus.setTextFill(Color.web("#000DFF"));
 				mediaTime.setText(mediaPlayer.getCurrentTime()+"\n"+mediaPlayer.getCycleDuration());
 			} else {
 				if (mediaPlayer != null) {
-					selectedAudio = fullPath;
-					hit = new Media(new File(selectedAudio).toURI().toString());
-					mediaPlayer.stop();
+
 					mediaPlayer.play();
 					mediaTime.setText(mediaPlayer.getCurrentTime()+"\n"+mediaPlayer.getCycleDuration());
+				}
+				if (repeatset != null || repeatset != "" ) {
+					setTimesRepeat();
 				}
 			}
 		}
 		 catch (Exception e) {
-			actionStatus.setText("No song selected!");
+			 if (mediaPlayer != null) {
+			actionStatus.setText("Now playing: " + selectedFile.getName());
 			System.out.println(e.getMessage());
+			 }
+			 else {
+				 actionStatus.setTextFill(Color.web("#FF0000"));
+				 actionStatus.setText("No song selected!");
+			 }
+		}
+	}
+		
+		public void setTimesRepeat () {
+		
+			repeatset = timesRepeat.getText();
+			repeatSetInt = Integer.parseInt(repeatset);
+		
+			
+		if (repeatState == true) {
+			for (int i=1; i <= repeatSetInt; i++);
+			mediaPlayer.play();
+			mediaPlayer.stop();
+			System.out.println("Entrou na repeatState");
 		}
 		
-
-	}
+		}
+	
 
 	@FXML
 	public void onbtStopButtonAction() {
-		selectedAudio = fullPath;
-		hit = new Media(new File(selectedAudio).toURI().toString());
+
 		mediaPlayer.stop();
 		mediaTime.setText(mediaPlayer.getCurrentTime()+"\n"+mediaPlayer.getCycleDuration());
+		actionStatus.setTextFill(Color.web("#FF0000"));
+		actionStatus.setText("Now stopped: " + selectedFile.getName());
 		
 	}
 
 	@FXML
 	public void pauseButtonAction() {
-		String selectedAudio = fullPath;
-		hit = new Media(new File(selectedAudio).toURI().toString());
+	
 		mediaPlayer.pause();
 		mediaTime.setText(mediaPlayer.getCurrentTime()+"\n"+mediaPlayer.getCycleDuration());
+		actionStatus.setTextFill(Color.web("#FFA500"));
+		actionStatus.setText("Now paused: " + selectedFile.getName());
 	}
 
 	@FXML
 	public void onbtPlaylistAction() {
 
 		FileChooser fileChooser = new FileChooser();
-		File selectedFile = fileChooser.showOpenDialog(null);
+		selectedFile = fileChooser.showOpenDialog(null);
 		try {
 			fullPath = selectedFile.getCanonicalPath();
 			System.out.println(fullPath);
@@ -144,10 +184,10 @@ public class MainViewController implements Initializable {
 			actionStatus.setText("Failed getting file path: " + e);
 		}
 
-		if (selectedFile != null) {
-
-			actionStatus.setText("Now playing: " + selectedFile.getName());
+		if (selectedFile != null && mediaPlayer ==null) {
+			actionStatus.setText("Now stopped: " + selectedFile.getName());
 		} else {
+			actionStatus.setTextFill(Color.web("#FF0000"));
 			actionStatus.setText("File selection cancelled.");
 		}
 		
@@ -163,6 +203,13 @@ public class MainViewController implements Initializable {
 
 		});
 	}
+	
+	@FXML
+	public void verifyCheckbox () {
+		
+			repeatState = true;
+	}
+	
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
@@ -189,6 +236,9 @@ public class MainViewController implements Initializable {
 			/* Executa a acao dos parametros que foram passados para inicializacao */
 			T controller = loader.getController();
 			initializingAction.accept(controller);
+			
+			
+			
 
 		} catch (IOException e) {
 
