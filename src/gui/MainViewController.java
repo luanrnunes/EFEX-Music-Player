@@ -3,12 +3,14 @@ package gui;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.Timer;
 import java.util.function.Consumer;
 
 import application.Main;
 import gui.util.Alerts;
-import javafx.beans.value.ChangeListener;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -17,9 +19,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
@@ -27,7 +32,6 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 public class MainViewController implements Initializable {
 
@@ -41,16 +45,8 @@ public class MainViewController implements Initializable {
 	private MenuItem menuItemAbout;
 
 	@FXML
-	private Button playButton;
-
-	@FXML
-	private Button stopButton;
-
-	@FXML
-	private Button playListButton;
-
-	@FXML
-	private Button pauseButton;
+	private Button playButton, stopButton, playListButton, pauseButton, previousButton, nextButton;
+	
 
 	@FXML
 	private Stage stage;
@@ -66,6 +62,25 @@ public class MainViewController implements Initializable {
 	
 	@FXML
 	private CheckBox repeat;
+	
+	@FXML
+	private ComboBox<String> speedSelector;
+	
+	@FXML
+	private Slider volumeSlider;
+	
+	@FXML 
+	private ProgressBar songProgress;
+	
+	private File directory;
+	
+	private File [] files;
+	
+	private ArrayList<File> songs;
+	
+	private int songCounter;
+	
+	private int [] speeds = {25, 50, 75, 100, 125, 150, 175, 200};
 	
 	private Boolean repeatState = false;
 
@@ -83,8 +98,9 @@ public class MainViewController implements Initializable {
 	
 	private Integer repeatSetInt;
 	
-	private ChangeListener<Duration> TimeListener;
+	private Timer timer;
 	
+	private boolean isRunning;
 
 	@FXML
 	public void onMenuItemFileAction() {
@@ -104,19 +120,24 @@ public class MainViewController implements Initializable {
 	@FXML
 	public void onbtPlayButtonAction() {
 		try {
+		
 
 			if (mediaPlayer == null) {
+				actionStatus.setTextFill(Color.web("#000dff"));
 				selectedAudio = fullPath;
 				hit = new Media(new File(selectedAudio).toURI().toString());
 				mediaPlayer = new MediaPlayer(hit);
 				mediaPlayer.play();
-				actionStatus.setTextFill(Color.web("#000DFF"));
-				mediaTime.setText(mediaPlayer.getCurrentTime()+"\n"+mediaPlayer.getCycleDuration());
+				/*Duration durMilli = mediaPlayer.getCurrentTime();
+				String durMilliStr = durMilli.toString();
+				Double durDouble = Double.parseDouble(durMilliStr);
+				Double converMilli = (durDouble/1000) / 60;*/
+				mediaTime.setText(mediaPlayer.getCurrentTime()+" / "+mediaPlayer.getCycleDuration());
 			} else {
 				if (mediaPlayer != null) {
-
+					actionStatus.setTextFill(Color.web("#000dff"));
 					mediaPlayer.play();
-					mediaTime.setText(mediaPlayer.getCurrentTime()+"\n"+mediaPlayer.getCycleDuration());
+					mediaTime.setText(mediaPlayer.getCurrentTime()+" / "+mediaPlayer.getCycleDuration());
 				}
 				if (repeatset != null || repeatset != "" ) {
 					setTimesRepeat();
@@ -155,7 +176,7 @@ public class MainViewController implements Initializable {
 	public void onbtStopButtonAction() {
 
 		mediaPlayer.stop();
-		mediaTime.setText(mediaPlayer.getCurrentTime()+"\n"+mediaPlayer.getCycleDuration());
+		mediaTime.setText((mediaPlayer.getCurrentTime()+" / "+mediaPlayer.getCycleDuration()));
 		actionStatus.setTextFill(Color.web("#FF0000"));
 		actionStatus.setText("Now stopped: " + selectedFile.getName());
 		
@@ -165,7 +186,7 @@ public class MainViewController implements Initializable {
 	public void pauseButtonAction() {
 	
 		mediaPlayer.pause();
-		mediaTime.setText(mediaPlayer.getCurrentTime()+"\n"+mediaPlayer.getCycleDuration());
+		mediaTime.setText(mediaPlayer.getCurrentTime()+" / "+mediaPlayer.getCycleDuration());
 		actionStatus.setTextFill(Color.web("#FFA500"));
 		actionStatus.setText("Now paused: " + selectedFile.getName());
 	}
@@ -185,7 +206,7 @@ public class MainViewController implements Initializable {
 		}
 
 		if (selectedFile != null && mediaPlayer ==null) {
-			actionStatus.setText("Now stopped: " + selectedFile.getName());
+			actionStatus.setText("Now playing: " + selectedFile.getName());
 		} else {
 			actionStatus.setTextFill(Color.web("#FF0000"));
 			actionStatus.setText("File selection cancelled.");
@@ -208,6 +229,36 @@ public class MainViewController implements Initializable {
 	public void verifyCheckbox () {
 		
 			repeatState = true;
+	}
+	
+	@FXML
+	public void onBtReset() {
+		
+	}
+	
+	@FXML
+	public void onBtNext() {
+		
+	}
+	
+	@FXML
+	public void onBtPrevious() {
+		
+	}
+	
+	@FXML
+	public void onSliderSpeed(ActionEvent event) {
+		
+	}
+	
+	@FXML
+	public void startTimer() {
+		
+	}
+	
+	@FXML
+	public void stopTimer() {
+		
 	}
 	
 
