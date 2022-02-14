@@ -32,6 +32,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class MainViewController implements Initializable {
 
@@ -45,8 +46,10 @@ public class MainViewController implements Initializable {
 	private MenuItem menuItemAbout;
 
 	@FXML
-	private Button playButton, stopButton, playListButton, pauseButton, previousButton, nextButton;
+	private Button playButton, stopButton, playListButton, pauseButton, nextButton, resetButton;
 	
+	@FXML
+	private Button prevButton;
 
 	@FXML
 	private Stage stage;
@@ -88,7 +91,7 @@ public class MainViewController implements Initializable {
 
 	private MediaPlayer mediaPlayer;
 
-	private Media hit;
+	private Media media;
 	
 	private String selectedAudio;
 	
@@ -101,6 +104,66 @@ public class MainViewController implements Initializable {
 	private Timer timer;
 	
 	private boolean isRunning;
+
+	
+
+	@Override
+	public void initialize(URL url, ResourceBundle rb) {
+		
+		songs = new ArrayList<File>();
+		directory = new File("music");
+		files = directory.listFiles(); /*Metodo captura todos os arquivos no folder*/
+		
+		if(files != null) {
+			
+			for(File file : files) {
+				songs.add(file);
+			}
+			
+		}
+		
+		/*media = new Media(songs.get(songCounter).toURI().toString());
+		mediaPlayer = new MediaPlayer(media);*/
+		
+		for(int i = 0; i < speeds.length; i++) {
+			speedSelector.getItems().add(Integer.toString(speeds[i])+'%');
+		}
+		
+		speedSelector.setOnAction(this::onSpeedSetter);
+		
+	}
+
+	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {
+
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+			VBox newVBox = loader.load();
+
+			Scene mainScene = Main.getMainScene();
+
+			/* Casting para o VBox da tela principal. Ver FXML... */
+			/* Permite que mantenha a janela aberta junto as janelas filhas */
+			VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
+
+			Node mainMenu = mainVBox.getChildren().get(0);
+			mainVBox.getChildren().clear();
+			mainVBox.getChildren().add(mainMenu);
+			mainVBox.getChildren().addAll(newVBox.getChildren());
+
+			/* Executa a acao dos parametros que foram passados para inicializacao */
+			T controller = loader.getController();
+			initializingAction.accept(controller);
+			
+			
+			
+
+		} catch (IOException e) {
+
+			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
+		}
+
+	}
+	
 
 	@FXML
 	public void onMenuItemFileAction() {
@@ -125,8 +188,8 @@ public class MainViewController implements Initializable {
 			if (mediaPlayer == null) {
 				actionStatus.setTextFill(Color.web("#000dff"));
 				selectedAudio = fullPath;
-				hit = new Media(new File(selectedAudio).toURI().toString());
-				mediaPlayer = new MediaPlayer(hit);
+				media = new Media(new File(selectedAudio).toURI().toString());
+				mediaPlayer = new MediaPlayer(media);
 				mediaPlayer.play();
 				/*Duration durMilli = mediaPlayer.getCurrentTime();
 				String durMilliStr = durMilli.toString();
@@ -188,12 +251,13 @@ public class MainViewController implements Initializable {
 		mediaPlayer.pause();
 		mediaTime.setText(mediaPlayer.getCurrentTime()+" / "+mediaPlayer.getCycleDuration());
 		actionStatus.setTextFill(Color.web("#FFA500"));
-		actionStatus.setText("Now paused: " + selectedFile.getName());
+		actionStatus.setText("Now Paused: " + selectedFile.getName());
 	}
 
 	@FXML
 	public void onbtPlaylistAction() {
-
+		
+		
 		FileChooser fileChooser = new FileChooser();
 		selectedFile = fileChooser.showOpenDialog(null);
 		try {
@@ -205,15 +269,14 @@ public class MainViewController implements Initializable {
 			actionStatus.setText("Failed getting file path: " + e);
 		}
 
-		if (selectedFile != null && mediaPlayer ==null) {
+		if (selectedFile != null) {
 			actionStatus.setText("Now playing: " + selectedFile.getName());
 		} else {
 			actionStatus.setTextFill(Color.web("#FF0000"));
 			actionStatus.setText("File selection cancelled.");
 		}
-		
-		
-	}
+		}
+	
 	
 			
 	
@@ -233,21 +296,71 @@ public class MainViewController implements Initializable {
 	
 	@FXML
 	public void onBtReset() {
-		
+		mediaPlayer.seek(Duration.seconds(0));
 	}
 	
 	@FXML
 	public void onBtNext() {
 		
-	}
-	
-	@FXML
-	public void onBtPrevious() {
+		if(songCounter < songs.size() - 1)
+		{
+			songCounter ++;
+			
+			mediaPlayer.stop();
+			
+			media = new Media(songs.get(songCounter).toURI().toString());
+			mediaPlayer = new MediaPlayer(media);
+			
+			actionStatus.setText("Now Playing: " + songs.get(songCounter).getName());
+			
+			mediaPlayer.play();
+		}
+		else {
+			
+			songCounter = 0;
+			
+			media = new Media(songs.get(songCounter).toURI().toString());
+			mediaPlayer = new MediaPlayer(media);
+			
+			actionStatus.setText("Now Playing: " + songs.get(songCounter).getName());
+			mediaPlayer.play();
+		}
 		
 	}
 	
 	@FXML
-	public void onSliderSpeed(ActionEvent event) {
+	public void onBtPrevious() {
+		if(songCounter > 0)
+		{
+			songCounter --;
+			
+			mediaPlayer.stop();
+			
+			media = new Media(songs.get(songCounter).toURI().toString());
+			mediaPlayer = new MediaPlayer(media);
+			
+			actionStatus.setText("Now Playing: " + songs.get(songCounter).getName());
+			
+			mediaPlayer.play();
+		}
+		else {
+			
+			songCounter = songs.size() - 1;
+			
+			media = new Media(songs.get(songCounter).toURI().toString());
+			mediaPlayer = new MediaPlayer(media);
+			
+			actionStatus.setText("Now Playing: " + songs.get(songCounter).getName());
+			mediaPlayer.play();
+		}
+		
+	}
+	
+	/*Listeners sao ActionEvent event*/
+	@FXML
+	public void onSpeedSetter(ActionEvent event) {
+		/*getValue().substring(0, speedSelector.getValue().length() -1)) esta linha ignora o simbolo de porcento ao passar no evento*/
+		mediaPlayer.setRate(Integer.parseInt(speedSelector.getValue().substring(0, speedSelector.getValue().length() -1)) * 0.01);
 		
 	}
 	
@@ -259,43 +372,6 @@ public class MainViewController implements Initializable {
 	@FXML
 	public void stopTimer() {
 		
-	}
-	
-
-	@Override
-	public void initialize(URL url, ResourceBundle rb) {
-
-	}
-
-	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {
-
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-			VBox newVBox = loader.load();
-
-			Scene mainScene = Main.getMainScene();
-
-			/* Casting para o VBox da tela principal. Ver FXML... */
-			/* Permite que mantenha a janela aberta junto as janelas filhas */
-			VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
-
-			Node mainMenu = mainVBox.getChildren().get(0);
-			mainVBox.getChildren().clear();
-			mainVBox.getChildren().add(mainMenu);
-			mainVBox.getChildren().addAll(newVBox.getChildren());
-
-			/* Executa a acao dos parametros que foram passados para inicializacao */
-			T controller = loader.getController();
-			initializingAction.accept(controller);
-			
-			
-			
-
-		} catch (IOException e) {
-
-			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
-		}
-
 	}
 
 }
