@@ -6,10 +6,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.function.Consumer;
 
 import application.Main;
 import gui.util.Alerts;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -73,7 +76,7 @@ public class MainViewController implements Initializable {
 	private Slider volumeSlider;
 	
 	@FXML 
-	private ProgressBar songProgress;
+	private ProgressBar songProgressBar;
 	
 	private File directory;
 	
@@ -99,9 +102,19 @@ public class MainViewController implements Initializable {
 	
 	private String repeatset;
 	
+	private String dbCurrent;
+	
+	private String dbEnd;
+	
 	private Integer repeatSetInt;
 	
 	private Timer timer;
+	
+	private TimerTask task;
+	
+	private double current;
+	
+	private double end;
 	
 	private boolean isRunning;
 
@@ -131,6 +144,17 @@ public class MainViewController implements Initializable {
 		
 		speedSelector.setOnAction(this::onSpeedSetter);
 		
+		volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+				mediaPlayer.setVolume(volumeSlider.getValue() * 0.01);
+				
+			}
+			
+		});
+		
+		songProgressBar.setStyle("-fx-accent: #54BAB9;");
 	}
 
 	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {
@@ -182,25 +206,28 @@ public class MainViewController implements Initializable {
 
 	@FXML
 	public void onbtPlayButtonAction() {
+	
 		try {
 		
-
 			if (mediaPlayer == null) {
+				mediaPlayer.setVolume(volumeSlider.getValue() * 0.01);
 				actionStatus.setTextFill(Color.web("#000dff"));
 				selectedAudio = fullPath;
 				media = new Media(new File(selectedAudio).toURI().toString());
 				mediaPlayer = new MediaPlayer(media);
+				startTimer();
+				onSpeedSetter(null);
 				mediaPlayer.play();
-				/*Duration durMilli = mediaPlayer.getCurrentTime();
-				String durMilliStr = durMilli.toString();
-				Double durDouble = Double.parseDouble(durMilliStr);
-				Double converMilli = (durDouble/1000) / 60;*/
-				mediaTime.setText(mediaPlayer.getCurrentTime()+" / "+mediaPlayer.getCycleDuration());
+				dbCurrent = Double.toString(current);
+				dbEnd = Double.toString(end);
+				mediaTime.setText(dbCurrent+" / " + dbEnd);
 			} else {
 				if (mediaPlayer != null) {
 					actionStatus.setTextFill(Color.web("#000dff"));
 					mediaPlayer.play();
-					mediaTime.setText(mediaPlayer.getCurrentTime()+" / "+mediaPlayer.getCycleDuration());
+					dbCurrent = Double.toString(current);
+					dbEnd = Double.toString(end);
+					mediaTime.setText(dbCurrent+" / " + dbEnd);
 				}
 				if (repeatset != null || repeatset != "" ) {
 					setTimesRepeat();
@@ -237,7 +264,8 @@ public class MainViewController implements Initializable {
 
 	@FXML
 	public void onbtStopButtonAction() {
-
+		
+		stopTimer();
 		mediaPlayer.stop();
 		mediaTime.setText((mediaPlayer.getCurrentTime()+" / "+mediaPlayer.getCycleDuration()));
 		actionStatus.setTextFill(Color.web("#FF0000"));
@@ -251,7 +279,7 @@ public class MainViewController implements Initializable {
 		mediaPlayer.pause();
 		mediaTime.setText(mediaPlayer.getCurrentTime()+" / "+mediaPlayer.getCycleDuration());
 		actionStatus.setTextFill(Color.web("#FFA500"));
-		actionStatus.setText("Now Paused: " + selectedFile.getName());
+		actionStatus.setText("Now paused: " + selectedFile.getName());
 	}
 
 	@FXML
@@ -296,6 +324,8 @@ public class MainViewController implements Initializable {
 	
 	@FXML
 	public void onBtReset() {
+		
+		songProgressBar.setProgress(0);
 		mediaPlayer.seek(Duration.seconds(0));
 	}
 	
@@ -308,6 +338,11 @@ public class MainViewController implements Initializable {
 			
 			mediaPlayer.stop();
 			
+			if(isRunning) {
+				stopTimer();
+			}
+				
+			
 			media = new Media(songs.get(songCounter).toURI().toString());
 			mediaPlayer = new MediaPlayer(media);
 			
@@ -317,12 +352,19 @@ public class MainViewController implements Initializable {
 		}
 		else {
 			
-			songCounter = 0;
+			songCounter = songs.size() - 1;
+			
+			mediaPlayer.stop();
+			
+			if(isRunning) {
+				
+				stopTimer();
+			}
 			
 			media = new Media(songs.get(songCounter).toURI().toString());
 			mediaPlayer = new MediaPlayer(media);
 			
-			actionStatus.setText("Now Playing: " + songs.get(songCounter).getName());
+			actionStatus.setText("Now playing: " + songs.get(songCounter).getName());
 			mediaPlayer.play();
 		}
 		
@@ -336,6 +378,11 @@ public class MainViewController implements Initializable {
 			
 			mediaPlayer.stop();
 			
+			if(isRunning) {
+				
+				stopTimer();
+			}
+			
 			media = new Media(songs.get(songCounter).toURI().toString());
 			mediaPlayer = new MediaPlayer(media);
 			
@@ -346,6 +393,13 @@ public class MainViewController implements Initializable {
 		else {
 			
 			songCounter = songs.size() - 1;
+			
+			mediaPlayer.stop();
+			
+			if(isRunning) {
+				
+				stopTimer();
+			}
 			
 			media = new Media(songs.get(songCounter).toURI().toString());
 			mediaPlayer = new MediaPlayer(media);
@@ -360,18 +414,43 @@ public class MainViewController implements Initializable {
 	@FXML
 	public void onSpeedSetter(ActionEvent event) {
 		/*getValue().substring(0, speedSelector.getValue().length() -1)) esta linha ignora o simbolo de porcento ao passar no evento*/
-		mediaPlayer.setRate(Integer.parseInt(speedSelector.getValue().substring(0, speedSelector.getValue().length() -1)) * 0.01);
 		
+		if(speedSelector.getValue() == null)
+			mediaPlayer.setRate(1);
+		
+	else  {
+		mediaPlayer.setRate(Integer.parseInt(speedSelector.getValue().substring(0, speedSelector.getValue().length() -1)) * 0.01);
+		}
 	}
 	
 	@FXML
 	public void startTimer() {
 		
+		timer = new Timer();
+		
+		task = new TimerTask() {
+			
+			public void run () {
+				
+				isRunning = true;
+				current = mediaPlayer.getCurrentTime().toSeconds();
+				end = media.getDuration().toSeconds();
+				System.out.println(current/end);
+				songProgressBar.setProgress(current/end);
+				
+				if(current/end == 1) {
+					stopTimer();
+				}
+				
+			}
+		};
+		
+		timer.scheduleAtFixedRate(task, 0, 1000);
 	}
 	
 	@FXML
 	public void stopTimer() {
-		
+		timer.cancel();
 	}
 
 }
