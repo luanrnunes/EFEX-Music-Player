@@ -18,6 +18,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -112,6 +113,8 @@ public class MainViewController implements Initializable {
 	
 	private TimerTask task;
 	
+	private String repeatSong;
+	
 	private double current;
 	
 	private double end;
@@ -143,6 +146,7 @@ public class MainViewController implements Initializable {
 		}
 		
 		speedSelector.setOnAction(this::onSpeedSetter);
+		
 		
 		volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
 
@@ -210,19 +214,37 @@ public class MainViewController implements Initializable {
 		try {
 		
 			if (mediaPlayer == null) {
+				
+				if(repeat.isSelected()) {
+					
+					System.out.println("repeat is selected with value of "+setTimesRepeat());
+					timesRepeat.setEditable(true);
+					for (int i=0; i == setTimesRepeat(); i++) {
+						media = new Media(new File(repeatSong).toURI().toString());
+						mediaPlayer.play();
+						mediaPlayer.setVolume(volumeSlider.getValue() * 0.01);
+						actionStatus.setTextFill(Color.web("#000dff"));
+					}	
+					
+				}
+				else {
+					timesRepeat.setEditable(false);
+				}
+				media = new Media(new File(fullPath).toURI().toString());
+				mediaPlayer = new MediaPlayer(media);
+				mediaPlayer.play();
 				mediaPlayer.setVolume(volumeSlider.getValue() * 0.01);
 				actionStatus.setTextFill(Color.web("#000dff"));
 				selectedAudio = fullPath;
-				media = new Media(new File(selectedAudio).toURI().toString());
-				mediaPlayer = new MediaPlayer(media);
+
 				startTimer();
 				onSpeedSetter(null);
-				mediaPlayer.play();
+				
 				dbCurrent = Double.toString(current);
 				dbEnd = Double.toString(end);
 				mediaTime.setText(dbCurrent+" / " + dbEnd);
 			} else {
-				if (mediaPlayer != null) {
+			if (mediaPlayer != null) {
 					actionStatus.setTextFill(Color.web("#000dff"));
 					mediaPlayer.play();
 					dbCurrent = Double.toString(current);
@@ -234,6 +256,7 @@ public class MainViewController implements Initializable {
 				}
 			}
 		}
+	
 		 catch (Exception e) {
 			 if (mediaPlayer != null) {
 			actionStatus.setText("Now playing: " + selectedFile.getName());
@@ -246,19 +269,11 @@ public class MainViewController implements Initializable {
 		}
 	}
 		
-		public void setTimesRepeat () {
+		public Integer setTimesRepeat () {
 		
 			repeatset = timesRepeat.getText();
 			repeatSetInt = Integer.parseInt(repeatset);
-		
-			
-		if (repeatState == true) {
-			for (int i=1; i <= repeatSetInt; i++);
-			mediaPlayer.play();
-			mediaPlayer.stop();
-			System.out.println("Entrou na repeatState");
-		}
-		
+			return repeatSetInt;
 		}
 	
 
@@ -270,6 +285,7 @@ public class MainViewController implements Initializable {
 		mediaTime.setText((mediaPlayer.getCurrentTime()+" / "+mediaPlayer.getCycleDuration()));
 		actionStatus.setTextFill(Color.web("#FF0000"));
 		actionStatus.setText("Now stopped: " + selectedFile.getName());
+		
 		
 	}
 
@@ -288,9 +304,11 @@ public class MainViewController implements Initializable {
 		
 		FileChooser fileChooser = new FileChooser();
 		selectedFile = fileChooser.showOpenDialog(null);
+		repeatSong = fullPath;
+		System.out.println("The song for repeat is: "+ repeatSong);
 		try {
 			fullPath = selectedFile.getCanonicalPath();
-			System.out.println(fullPath);
+			System.out.println("The actual song is: "+fullPath);
 
 		} catch (IOException e) {
 
@@ -303,18 +321,30 @@ public class MainViewController implements Initializable {
 			actionStatus.setTextFill(Color.web("#FF0000"));
 			actionStatus.setText("File selection cancelled.");
 		}
+
 		}
-	
-	
 			
 	
 	@FXML
 	public void onMenuItemAboutAction() {
-
+		/*
 		loadView("/gui/AboutView.fxml", x -> {
 
-		});
-	}
+		});*/
+		
+        Parent root;
+        try {
+            root = FXMLLoader.load(getClass().getResource("/gui/AboutView.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("About");
+            stage.setScene(new Scene(root, 400, 400));
+            stage.show();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+		
 	
 	@FXML
 	public void verifyCheckbox () {
@@ -400,7 +430,7 @@ public class MainViewController implements Initializable {
 				
 				stopTimer();
 			}
-			
+		
 			media = new Media(songs.get(songCounter).toURI().toString());
 			mediaPlayer = new MediaPlayer(media);
 			
@@ -426,7 +456,7 @@ public class MainViewController implements Initializable {
 	@FXML
 	public void startTimer() {
 		
-		timer = new Timer();
+		 timer = new Timer();
 		
 		task = new TimerTask() {
 			
@@ -450,6 +480,7 @@ public class MainViewController implements Initializable {
 	
 	@FXML
 	public void stopTimer() {
+		timer = new Timer();
 		timer.cancel();
 	}
 
