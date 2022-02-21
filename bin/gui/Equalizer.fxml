@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #F1E0AC;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.EqualizerViewController">
+   <children>
+      <ScrollPane prefHeight="403.0" prefWidth="600.0" style="-fx-background-color: #F1E0AC;">
+         <content>
+            <AnchorPane prefHeight="399.0" prefWidth="607.0" style="-fx-background-color: #F1E0AC;">
+               <children>
+                  <Slider id="volumeBoostBar" fx:id="volumeBoostSlider" layoutX="40.0" layoutY="56.0" prefHeight="96.0" prefWidth="179.0" />
+                  <Label layoutX="71.0" layoutY="113.0" text="Normal Volume Boost" />
+                  <Label layoutX="189.0" layoutY="20.0" prefHeight="51.0" prefWidth="189.0" text="EFEX EQUALIZER">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+                  <RadioButton id="radioBassBoost" fx:id="bassBoostSelect" layoutX="365.0" layoutY="84.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="121.0" text="Bass Boost" />
+                  <ComboBox fx:id="comboPresets" layoutX="208.0" layoutY="232.0" prefHeight="72.0" prefWidth="108.0" style="-fx-background-color: #F5F2E7;" />
+                  <Label layoutX="231.0" layoutY="200.0" text="Presets">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+         </content>
+      </ScrollPane>
+   </children>
+</VBox>

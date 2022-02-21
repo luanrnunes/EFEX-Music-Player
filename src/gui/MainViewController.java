@@ -194,12 +194,23 @@ public class MainViewController implements Initializable {
 	
 
 	@FXML
-	public void onMenuItemFileAction() {
-		loadView("/gui/ItemView.fxml", (FileViewController controller) -> {
+	public void onMenuEqualizerAction() {
 
-			System.out.println("ok");
-		});
-	}
+	        Parent root;
+	        try {
+	            root = FXMLLoader.load(getClass().getResource("/gui/Equalizer.fxml"));
+	            Stage stage = new Stage();
+	            stage.setTitle("EFEX Equalizer");
+	            stage.setScene(new Scene(root, 600, 400));
+	            stage.show();
+	            EqualizerViewController eq = new EqualizerViewController();
+	            eq.initialize(null, null);
+	        }
+	        catch (IOException e) {
+	            e.printStackTrace();
+	        }
+		};
+	
 
 	@FXML
 	public void onMenuItemConfig() {
