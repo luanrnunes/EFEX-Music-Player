@@ -10,6 +10,8 @@ import java.util.TimerTask;
 import java.util.function.Consumer;
 
 import application.Main;
+import dao.EfexDAO;
+import dao.Songdata;
 import gui.util.Alerts;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -221,8 +223,10 @@ public class MainViewController implements Initializable {
 
 	@FXML
 	public void onbtPlayButtonAction() {
-	
+		
+		
 		try {
+			
 		
 			if (mediaPlayer == null) {
 				
@@ -254,6 +258,17 @@ public class MainViewController implements Initializable {
 				dbCurrent = Double.toString(current);
 				dbEnd = Double.toString(end);
 				mediaTime.setText(dbCurrent+" / " + dbEnd);
+				
+				try {
+					Songdata dt = new Songdata(selectedFile.getName(), dbEnd.toString(),fullPath);
+					EfexDAO efexDao = new EfexDAO(dao.DB.getConnection());
+					efexDao.insert(dt);
+					System.out.println("Inserted! New ID = " + dt.getName());
+					
+					}catch(RuntimeException e) {
+						e.printStackTrace();	
+					}
+				
 			} else {
 			if (mediaPlayer != null) {
 					actionStatus.setTextFill(Color.web("#000dff"));
@@ -262,6 +277,17 @@ public class MainViewController implements Initializable {
 					dbEnd = Double.toString(end);
 					mediaTime.setText(dbCurrent+" / " + dbEnd);
 				}
+			
+			try {
+				Songdata dt = new Songdata(selectedFile.getName(), dbEnd.toString(),fullPath);
+				EfexDAO efexDao = new EfexDAO(dao.DB.getConnection());
+				efexDao.insert(dt);
+				System.out.println("Inserted! New ID = " + dt.getName());
+				
+				}catch(RuntimeException e) {
+					e.printStackTrace();	
+				}
+			
 				if (repeatset != null || repeatset != "" ) {
 					setTimesRepeat();
 				}
