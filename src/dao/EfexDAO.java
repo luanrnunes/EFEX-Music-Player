@@ -8,7 +8,7 @@ import java.sql.Statement;
 
 
 public class EfexDAO {
-	private Connection conn;
+	public Connection conn;
 	
 	public EfexDAO(Connection conn) {
 		this.conn = conn;
@@ -40,7 +40,37 @@ public class EfexDAO {
 				}
 				
 				
-			}
+			} catch(SQLException e){
+				e.printStackTrace();
+			}}
+		
+		public void get(Songdata obj) {
+			PreparedStatement st = null;
+			
+			try {
+				st = conn.prepareStatement(
+						"INSERT INTO song_logs "
+						+"(song, duration, path) "
+					    +"Values(?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+
+				st.setString(1, obj.getName());
+				st.setString(2, obj.getDuration());
+				st.setString(3, obj.getPath());
+
+				
+				int rowsAffected = st.executeUpdate();
+				
+				if (rowsAffected > 0) {
+					ResultSet rs = st.getGeneratedKeys();
+					System.out.println(rs);
+				}
+					
+					else {
+						throw new RuntimeException("Unexpected error! No rows affected");
+					}
+					
+					
+				}
 			
 		catch(SQLException e) {
 			throw new RuntimeException(e.getMessage());

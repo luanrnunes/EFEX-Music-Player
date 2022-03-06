@@ -24,6 +24,7 @@
               <menus>
                 <Menu fx:id="menuItemFile" mnemonicParsing="false" text="Player">
                   <items>
+                        <MenuItem id="historyMenu" mnemonicParsing="false" text="History" />
                     <MenuItem fx:id="menuItemEqualizer" mnemonicParsing="false" onAction="#onMenuEqualizerAction" text="Equalizer" />
                         <MenuItem fx:id="menuItemDepartment" mnemonicParsing="false" onAction="#onMenuItemConfig" text="Advanced Audio Options" />
                   </items>

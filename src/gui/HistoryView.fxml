@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="429.0" prefWidth="527.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.HistoryViewController">
+   <children>
+      <TableView fx:id="tableview" layoutX="6.0" layoutY="-3.0" prefHeight="432.0" prefWidth="532.0" style="-fx-background-color: #F1E0AC;">
+        <columns>
+          <TableColumn prefWidth="139.0" text="Songs" />
+          <TableColumn prefWidth="150.0" text="Duration" />
+            <TableColumn prefWidth="119.0" text="Path" />
+            <TableColumn prefWidth="129.0" text="Timestamp" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>
