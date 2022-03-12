@@ -3,6 +3,8 @@ package gui;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Timer;
@@ -123,7 +125,9 @@ public class MainViewController implements Initializable {
 	
 	private boolean isRunning;
 
+	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
 	
+	LocalDateTime now = LocalDateTime.now();  
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
@@ -213,7 +217,22 @@ public class MainViewController implements Initializable {
 	        }
 		};
 	
-
+		
+		@FXML
+		public void onMenuHistory() {
+	        Parent root;
+	        try {
+	            root = FXMLLoader.load(getClass().getResource("/gui/HistoryView.fxml"));
+	            Stage stage = new Stage();
+	            stage.setTitle("Database - History");
+	            stage.setScene(new Scene(root, 400, 400));
+	            stage.show();
+	        }
+	        catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
+		
 	@FXML
 	public void onMenuItemConfig() {
 		loadView("/gui/Item.fxml", (ConfigViewController controller) -> {
@@ -260,7 +279,7 @@ public class MainViewController implements Initializable {
 				mediaTime.setText(dbCurrent+" / " + dbEnd);
 				
 				try {
-					Songdata dt = new Songdata(selectedFile.getName(), dbEnd.toString(),fullPath);
+					Songdata dt = new Songdata(selectedFile.getName(), dbEnd.toString(),fullPath, dtf.format(now));
 					EfexDAO efexDao = new EfexDAO(dao.DB.getConnection());
 					efexDao.insert(dt);
 					System.out.println("Inserted! New ID = " + dt.getName());
@@ -279,7 +298,7 @@ public class MainViewController implements Initializable {
 				}
 			
 			try {
-				Songdata dt = new Songdata(selectedFile.getName(), dbEnd.toString(),fullPath);
+				Songdata dt = new Songdata(selectedFile.getName(), dbEnd.toString(),fullPath, dtf.format(now));
 				EfexDAO efexDao = new EfexDAO(dao.DB.getConnection());
 				efexDao.insert(dt);
 				System.out.println("Inserted! New ID = " + dt.getName());
