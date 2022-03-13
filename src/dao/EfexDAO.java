@@ -10,6 +10,10 @@ import java.sql.Statement;
 public class EfexDAO {
 	public Connection conn;
 	
+	public EfexDAO () {
+		
+	}
+	
 	public EfexDAO(Connection conn) {
 		this.conn = conn;
 	}
@@ -20,13 +24,13 @@ public class EfexDAO {
 		try {
 			st = conn.prepareStatement(
 					"INSERT INTO song_logs "
-					+"(song, duration, path) "
-				    +"Values(?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+					+"(song, duration, path, timestamp) "
+				    +"Values(?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 
 			st.setString(1, obj.getName());
 			st.setString(2, obj.getDuration());
 			st.setString(3, obj.getPath());
-
+			st.setString(4, obj.getTimestamp());
 			
 			int rowsAffected = st.executeUpdate();
 			
@@ -88,6 +92,31 @@ public class EfexDAO {
 		obj.setPath(rs.getString("path"));
 		return obj;
 	}
+
+	public void remove() {
+		
+		PreparedStatement st = null;
+		
+		try {
+			st = conn.prepareStatement("DELETE from song_logs where 1=1",Statement.RETURN_GENERATED_KEYS);
+
+
+			int rowsAffected = st.executeUpdate();
+			
+			if (rowsAffected > 0) {
+				ResultSet rs = st.getGeneratedKeys();
+				System.out.println(rs);
+			}
+				
+				
+			} catch(SQLException e){
+				e.printStackTrace();
+			}
+	
+		finally {
+		DB.closeStatement(st);
+	}
 	
 	
+}
 }

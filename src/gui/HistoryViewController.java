@@ -10,11 +10,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 import dao.DB;
+import dao.EfexDAO;
 import dao.Songdata;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -35,6 +40,13 @@ public class HistoryViewController implements Initializable {
 	
 	@FXML
 	private TableColumn<Songdata, Time> col_timestamp;
+	
+	@FXML
+	private Button remove;
+	
+	private Integer selectedIndex = -1;
+	
+	private Integer item;
 	
 	ObservableList<Songdata> oblist = FXCollections.observableArrayList();
 	
@@ -66,9 +78,33 @@ public class HistoryViewController implements Initializable {
 		col_timestamp.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
 		
 		table.setItems(oblist);
-	}
+		
+		/*Utilizar caso eu precise capturar cliques na tableview*/
+		table.setOnMouseClicked (event -> {
+				Songdata selectedItem = table.getSelectionModel().getSelectedItem();
+				selectedIndex = table.getSelectionModel().getSelectedIndex();
+				item = selectedItem.getId(selectedIndex-1);
+								
+	});
 
 
+
+}
+
+	@FXML
+	public void removeBtn() {
+		Connection conn = DB.getConnection();
+		EfexDAO efexdao = new EfexDAO(conn);
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Flush Data");
+        alert.setHeaderText(null);
+        alert.setContentText("Do you really want to flush the history data?");
+        alert.showAndWait();
+        if (alert.getResult() == ButtonType.OK) {
+		efexdao.remove();
+        }
+	};
+	
 }
 	
 

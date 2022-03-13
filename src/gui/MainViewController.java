@@ -225,7 +225,7 @@ public class MainViewController implements Initializable {
 	            root = FXMLLoader.load(getClass().getResource("/gui/HistoryView.fxml"));
 	            Stage stage = new Stage();
 	            stage.setTitle("Database - History");
-	            stage.setScene(new Scene(root, 400, 400));
+	            stage.setScene(new Scene(root, 500, 500));
 	            stage.show();
 	        }
 	        catch (IOException e) {

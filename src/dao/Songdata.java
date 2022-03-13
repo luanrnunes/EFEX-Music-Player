@@ -4,6 +4,8 @@ import java.sql.Time;
 
 public class Songdata {
 	
+	private Integer id;
+
 	private String name;
 	private String duration;
 	private String path;
@@ -11,6 +13,10 @@ public class Songdata {
 	
 	public Songdata() {
 		
+	}
+	
+	public Songdata(Integer id) {
+		this.id = id;
 	}
 
 	public Songdata(String name, String duration, String path, String timestamp) {
@@ -20,7 +26,15 @@ public class Songdata {
 		this.path = path;
 		this.timestamp = timestamp;
 	}
+	
+	public Integer getId(Integer selectedindex) {
+		return id;
+	}
 
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -52,10 +66,6 @@ public class Songdata {
 	public void setPath(String path) {
 		this.path = path;
 	}
+			
 	
-	
-	
-	
-	
-
 }
