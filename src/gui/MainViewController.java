@@ -141,8 +141,18 @@ public class MainViewController implements Initializable {
 			for(File file : files) {
 				songs.add(file);
 			}
-			
 		}
+		}
+		
+		@FXML
+		public void verifyCheckbox(ActionEvent event) {
+	        if(repeat.isSelected()){
+	        	timesRepeat.setDisable(false);
+	            setTimesRepeat();
+	        }
+	        else {
+	        	timesRepeat.setDisable(true);
+	        }
 		
 		/*media = new Media(songs.get(songCounter).toURI().toString());
 		mediaPlayer = new MediaPlayer(media);*/
@@ -243,27 +253,7 @@ public class MainViewController implements Initializable {
 	@FXML
 	public void onbtPlayButtonAction() {
 		
-		
-		try {
-			
-		
-			if (mediaPlayer == null) {
-				
-				if(repeat.isSelected()) {
-					
-					System.out.println("repeat is selected with value of "+setTimesRepeat());
-					timesRepeat.setEditable(true);
-					for (int i=0; i == setTimesRepeat(); i++) {
-						media = new Media(new File(repeatSong).toURI().toString());
-						mediaPlayer.play();
-						mediaPlayer.setVolume(volumeSlider.getValue() * 0.01);
-						actionStatus.setTextFill(Color.web("#000dff"));
-					}	
-					
-				}
-				else {
-					timesRepeat.setEditable(false);
-				}
+
 				media = new Media(new File(fullPath).toURI().toString());
 				mediaPlayer = new MediaPlayer(media);
 				mediaPlayer.play();
@@ -288,7 +278,6 @@ public class MainViewController implements Initializable {
 						e.printStackTrace();	
 					}
 				
-			} else {
 			if (mediaPlayer != null) {
 					actionStatus.setTextFill(Color.web("#000dff"));
 					mediaPlayer.play();
@@ -310,21 +299,10 @@ public class MainViewController implements Initializable {
 				if (repeatset != null || repeatset != "" ) {
 					setTimesRepeat();
 				}
-			}
-		}
-	
-		 catch (Exception e) {
-			 if (mediaPlayer != null) {
-			actionStatus.setText("Now playing: " + selectedFile.getName());
-			System.out.println(e.getMessage());
-			 }
-			 else {
-				 actionStatus.setTextFill(Color.web("#FF0000"));
-				 actionStatus.setText("No song selected!");
-			 }
-		}
+			
 	}
 		
+	
 		public Integer setTimesRepeat () {
 		
 			repeatset = timesRepeat.getText();
@@ -401,12 +379,6 @@ public class MainViewController implements Initializable {
         }
     }
 		
-	
-	@FXML
-	public void verifyCheckbox () {
-		
-			repeatState = true;
-	}
 	
 	@FXML
 	public void onBtReset() {
