@@ -1,18 +1,25 @@
 package gui;
 
 import java.net.URL;
+import java.sql.Connection;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
+import dao.DB;
+import dao.EfexDAO;
+import dao.Equalizerdata;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Alert.AlertType;
 
 public class EqualizerViewController implements Initializable {
 	
@@ -31,10 +38,16 @@ public class EqualizerViewController implements Initializable {
 	@FXML
 	private String [] presets = {"Normal","Pop","Rock","Classical","Jazz"};
 	
+	double volBoostValue;
+	
+	String comboPresetValue;
+	
+	Boolean bassBoostSelected;
+	
 
 	public void initialize(URL url, ResourceBundle rb) {
 		
-	
+		
 		
 		System.out.println(Arrays.toString(presets));
 		for(int i = 0; i < presets.length; i++) {
@@ -52,7 +65,8 @@ public class EqualizerViewController implements Initializable {
 
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-				System.out.println("Slider alterado");
+				System.out.println(volumeBoostSlider.getValue());
+				volBoostValue = volumeBoostSlider.getValue();
 				
 			}
 			
@@ -65,6 +79,7 @@ public class EqualizerViewController implements Initializable {
 	public void onPresetSelect(ActionEvent event) {
 		if (comboPresets.getValue() != null) {
 			System.out.println(comboPresets.getValue());
+			comboPresetValue = comboPresets.getValue();
 		}	
 
 	}
@@ -72,17 +87,38 @@ public class EqualizerViewController implements Initializable {
 	@FXML
 	public void onBassBoostSelect(ActionEvent event) {
         if(bassBoostSelect.isSelected()){
-            System.out.println("Bass Boost selecionado!");;
+            System.out.println("Bass Boost selecionado!");
+            bassBoostSelected = true;
         }
         else {
         	System.out.println("Bass Boost desligado!");
+        	bassBoostSelected = false;
         }
 	}
 	
+	
 	@FXML
 	public void onBtSaveSettings() {
-		System.out.println("Save button pressed!");
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Commit data?");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure that you want to keep these changes to the equalizer?");
+        alert.showAndWait();
+        if (alert.getResult() == ButtonType.OK) {
+        	Connection conn = DB.getConnection();
+        	Equalizerdata EqData = new Equalizerdata(volBoostValue, bassBoostSelected, comboPresetValue);
+        	EfexDAO efexdao = new EfexDAO(conn);
+        	efexdao.insertEqualizerData(EqData);
 	}
+        else {
+        	Alert alertCancel = new Alert(AlertType.INFORMATION);
+        	alertCancel.setTitle("Action canceled");
+        	alertCancel.setHeaderText(null);
+        	alertCancel.setContentText("Action canceled, no changes were made");
+        	alertCancel.showAndWait();
+        }
 
 
+}
+	
 }

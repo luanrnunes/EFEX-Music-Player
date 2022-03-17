@@ -83,15 +83,6 @@ public class EfexDAO {
 			DB.closeStatement(st);
 		}
 	}
-	
-	private Songdata instantiateSongdata(ResultSet rs) throws SQLException {
-		
-		Songdata obj = new Songdata();
-		obj.setName(rs.getString("name"));
-		obj.setDuration(rs.getString("duration"));
-		obj.setPath(rs.getString("path"));
-		return obj;
-	}
 
 	public void remove() {
 		
@@ -114,6 +105,42 @@ public class EfexDAO {
 			}
 	
 		finally {
+		DB.closeStatement(st);
+	}
+	}
+		
+	public void insertEqualizerData(Equalizerdata eqObj) {
+		PreparedStatement st = null;
+		
+		try {
+			st = conn.prepareStatement(
+					"INSERT INTO equalizer_data "
+					+"(volBoostData, bassBoostData, presetsData) "
+				    +"Values(?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+
+			st.setDouble(1, eqObj.getVolumeBoostDt());
+			st.setBoolean(2, eqObj.getBassBoostDt());
+			st.setString(3, eqObj.getEqualizerPreset());
+
+			
+			int rowsAffected = st.executeUpdate();
+			
+			if (rowsAffected > 0) {
+				ResultSet rs = st.getGeneratedKeys();
+				System.out.println(rs);
+			}
+				
+				else {
+					throw new RuntimeException("Unexpected error! No rows affected");
+				}
+				
+				
+			}
+		
+	catch(SQLException e) {
+		throw new RuntimeException(e.getMessage());
+	}
+	finally {
 		DB.closeStatement(st);
 	}
 	
