@@ -142,17 +142,10 @@ public class MainViewController implements Initializable {
 				songs.add(file);
 			}
 		}
-		}
 		
-		@FXML
-		public void verifyCheckbox(ActionEvent event) {
-	        if(repeat.isSelected()){
-	        	timesRepeat.setDisable(false);
-	            setTimesRepeat();
-	        }
-	        else {
-	        	timesRepeat.setDisable(true);
-	        }
+	
+		
+
 		
 		/*media = new Media(songs.get(songCounter).toURI().toString());
 		mediaPlayer = new MediaPlayer(media);*/
@@ -173,10 +166,12 @@ public class MainViewController implements Initializable {
 			}
 			
 		});
+
 		
 		songProgressBar.setStyle("-fx-accent: #54BAB9;");
+	
 	}
-
+		
 	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {
 
 		try {
@@ -206,6 +201,17 @@ public class MainViewController implements Initializable {
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
 
+	}
+	
+	@FXML
+	public void verifyCheckbox(ActionEvent event) {
+        if(repeat.isSelected()){
+        	timesRepeat.setDisable(false);
+            setTimesRepeat();
+        }
+        else {
+        	timesRepeat.setDisable(true);
+        }
 	}
 	
 
@@ -253,6 +259,13 @@ public class MainViewController implements Initializable {
 	@FXML
 	public void onbtPlayButtonAction() {
 		
+		if (mediaPlayer != null) {
+			actionStatus.setTextFill(Color.web("#000dff"));
+			mediaPlayer.play();
+			dbCurrent = Double.toString(current);
+			dbEnd = Double.toString(end);
+			mediaTime.setText(dbCurrent+" / " + dbEnd);
+		} else {
 
 				media = new Media(new File(fullPath).toURI().toString());
 				mediaPlayer = new MediaPlayer(media);
@@ -267,7 +280,7 @@ public class MainViewController implements Initializable {
 				dbCurrent = Double.toString(current);
 				dbEnd = Double.toString(end);
 				mediaTime.setText(dbCurrent+" / " + dbEnd);
-				
+		}
 				try {
 					Songdata dt = new Songdata(selectedFile.getName(), dbEnd.toString(),fullPath, dtf.format(now));
 					EfexDAO efexDao = new EfexDAO(dao.DB.getConnection());
@@ -278,13 +291,6 @@ public class MainViewController implements Initializable {
 						e.printStackTrace();	
 					}
 				
-			if (mediaPlayer != null) {
-					actionStatus.setTextFill(Color.web("#000dff"));
-					mediaPlayer.play();
-					dbCurrent = Double.toString(current);
-					dbEnd = Double.toString(end);
-					mediaTime.setText(dbCurrent+" / " + dbEnd);
-				}
 			
 			try {
 				Songdata dt = new Songdata(selectedFile.getName(), dbEnd.toString(),fullPath, dtf.format(now));
@@ -296,20 +302,23 @@ public class MainViewController implements Initializable {
 					e.printStackTrace();	
 				}
 			
-				if (repeatset != null || repeatset != "" ) {
+				/*if (repeatset != null || repeatset != "" ) {
 					setTimesRepeat();
-				}
+				}*/
 			
 	}
 		
 	
 		public Integer setTimesRepeat () {
-		
+		try {
 			repeatset = timesRepeat.getText();
 			repeatSetInt = Integer.parseInt(repeatset);
 			return repeatSetInt;
+		}catch(RuntimeException e) {
+			repeatSetInt = null;
+			return repeatSetInt;
 		}
-	
+		}
 
 	@FXML
 	public void onbtStopButtonAction() {
