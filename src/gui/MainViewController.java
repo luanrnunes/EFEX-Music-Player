@@ -143,8 +143,6 @@ public class MainViewController implements Initializable {
 			}
 		}
 		
-	
-		
 
 		
 		/*media = new Media(songs.get(songCounter).toURI().toString());
@@ -208,9 +206,11 @@ public class MainViewController implements Initializable {
         if(repeat.isSelected()){
         	timesRepeat.setDisable(false);
             setTimesRepeat();
+            repeatState = true;
         }
         else {
         	timesRepeat.setDisable(true);
+        	repeatState = false;
         }
 	}
 	
@@ -261,11 +261,21 @@ public class MainViewController implements Initializable {
 		
 		if (mediaPlayer != null) {
 			actionStatus.setTextFill(Color.web("#000dff"));
+			actionStatus.setText("Now playing: " + selectedFile.getName());
 			mediaPlayer.play();
 			dbCurrent = Double.toString(current);
 			dbEnd = Double.toString(end);
 			mediaTime.setText(dbCurrent+" / " + dbEnd);
+			
+
+			
 		} else {
+			
+				if(fullPath == null) {
+					actionStatus.setTextFill(Color.web("#FF0000"));
+					actionStatus.setText("No song selected!");
+				}
+				else {
 
 				media = new Media(new File(fullPath).toURI().toString());
 				mediaPlayer = new MediaPlayer(media);
@@ -273,6 +283,8 @@ public class MainViewController implements Initializable {
 				mediaPlayer.setVolume(volumeSlider.getValue() * 0.01);
 				actionStatus.setTextFill(Color.web("#000dff"));
 				selectedAudio = fullPath;
+				
+				actionStatus.setText("Now playing: " + selectedFile.getName());
 
 				startTimer();
 				onSpeedSetter(null);
@@ -280,7 +292,8 @@ public class MainViewController implements Initializable {
 				dbCurrent = Double.toString(current);
 				dbEnd = Double.toString(end);
 				mediaTime.setText(dbCurrent+" / " + dbEnd);
-		}
+				}
+				
 				try {
 					Songdata dt = new Songdata(selectedFile.getName(), dbEnd.toString(),fullPath, dtf.format(now));
 					EfexDAO efexDao = new EfexDAO(dao.DB.getConnection());
@@ -290,17 +303,8 @@ public class MainViewController implements Initializable {
 					}catch(RuntimeException e) {
 						e.printStackTrace();	
 					}
-				
+		}
 			
-			try {
-				Songdata dt = new Songdata(selectedFile.getName(), dbEnd.toString(),fullPath, dtf.format(now));
-				EfexDAO efexDao = new EfexDAO(dao.DB.getConnection());
-				efexDao.insert(dt);
-				System.out.println("Inserted! New ID = " + dt.getName());
-				
-				}catch(RuntimeException e) {
-					e.printStackTrace();	
-				}
 			
 				/*if (repeatset != null || repeatset != "" ) {
 					setTimesRepeat();
@@ -399,6 +403,7 @@ public class MainViewController implements Initializable {
 	@FXML
 	public void onBtNext() {
 		
+		
 		if(songCounter < songs.size() - 1)
 		{
 			songCounter ++;
@@ -439,6 +444,8 @@ public class MainViewController implements Initializable {
 	
 	@FXML
 	public void onBtPrevious() {
+		
+		
 		if(songCounter > 0)
 		{
 			songCounter --;
@@ -503,10 +510,48 @@ public class MainViewController implements Initializable {
 				current = mediaPlayer.getCurrentTime().toSeconds();
 				end = media.getDuration().toSeconds();
 				System.out.println(current/end);
+				System.out.println("current: "+current);
+				System.out.println("end: "+end);
 				songProgressBar.setProgress(current/end);
 				
-				if(current/end == 1) {
+				
+				if(current == end) {
+					
+					System.out.println("Entrou na condicao de fim de musica");
 					stopTimer();
+					while (repeatState == true && setTimesRepeat() != null) {
+						if (repeatSong == null) {
+							for (int i=0; i<=setTimesRepeat(); i++)
+							{
+							media = new Media(new File(fullPath).toURI().toString());
+							mediaPlayer = new MediaPlayer(media);
+							mediaPlayer.play();
+							try {
+								mediaPlayer.wait();
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							
+						}
+						
+					} else {
+						for (int i=0; i<=setTimesRepeat(); i++)
+						{
+						media = new Media(new File(repeatSong).toURI().toString());
+						mediaPlayer = new MediaPlayer(media);
+						mediaPlayer.play();
+						try {
+							mediaPlayer.wait();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						}
+					}
+					
+				}
+					
 				}
 				
 			}

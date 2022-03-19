@@ -102,6 +102,18 @@ public class HistoryViewController implements Initializable {
         alert.showAndWait();
         if (alert.getResult() == ButtonType.OK) {
 		efexdao.remove();
+        Alert alertConfirm = new Alert(AlertType.INFORMATION);
+        alertConfirm.setTitle("Data wiped out");
+        alertConfirm.setHeaderText(null);
+        alertConfirm.setContentText("All the history data has been flushed succesfully!");
+        alertConfirm.showAndWait();
+        
+       /* table.getScene().getWindow().setWidth(table.getScene().getWidth() + 0.001); /*Refresh scene*/
+        
+        MainViewController mvc = new MainViewController();
+        
+        mvc.onMenuHistory();
+
         }
 	};
 	
