@@ -20,21 +20,21 @@
    <content>
       <VBox prefHeight="431.0" prefWidth="671.0" style="-fx-background-color: #F1E0AC;">
          <children>
-            <MenuBar id="mainMenu">
+            <MenuBar id="mainMenu" style="-fx-background-color: #F7CCAC;">
               <menus>
-                <Menu fx:id="menuItemFile" mnemonicParsing="false" text="Player">
+                <Menu fx:id="menuItemFile" mnemonicParsing="false" style="-fx-background-color: #F7CCAC;" text="Player">
                   <items>
                         <MenuItem id="historyMenu" fx:id="MenuHistory" mnemonicParsing="false" onAction="#onMenuHistory" text="History" />
                     <MenuItem fx:id="menuItemEqualizer" mnemonicParsing="false" onAction="#onMenuEqualizerAction" text="Equalizer" />
                         <MenuItem fx:id="menuItemDepartment" mnemonicParsing="false" onAction="#onMenuItemConfig" text="Advanced Audio Options" />
                   </items>
                 </Menu>
-                  <Menu fx:id="menuItemConfig" mnemonicParsing="false" text="Config">
+                  <Menu fx:id="menuItemConfig" mnemonicParsing="false" style="-fx-background-color: #F7CCAC;" text="Config">
                     <items>
                       <MenuItem mnemonicParsing="false" text="Preferences" />
                     </items>
                   </Menu>
-                <Menu mnemonicParsing="false" text="Help">
+                <Menu mnemonicParsing="false" style="-fx-background-color: #F7CCAC;" text="Help">
                   <items>
                     <MenuItem fx:id="menuItemAbout" mnemonicParsing="false" onAction="#onMenuItemAboutAction" text="About" />
                   </items>
@@ -51,7 +51,7 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="mediaTime" layoutX="298.0" layoutY="140.0" prefHeight="67.0" prefWidth="182.0" textFill="#000000ab" AnchorPane.bottomAnchor="199.0" AnchorPane.leftAnchor="298.0" AnchorPane.topAnchor="140.0" />
+                  <Label fx:id="mediaTime" layoutX="292.0" layoutY="123.0" prefHeight="67.0" prefWidth="182.0" textFill="#000000ab" AnchorPane.bottomAnchor="216.0" AnchorPane.leftAnchor="292.0" AnchorPane.topAnchor="123.0" />
                   <CheckBox id="repeatCheckbox" fx:id="repeat" layoutX="8.0" layoutY="89.0" mnemonicParsing="false" onAction="#verifyCheckbox" prefHeight="37.0" prefWidth="103.0" text="REPEAT" />
                   <TextField id="repeatTimeSetter" fx:id="timesRepeat" disable="true" layoutX="76.0" layoutY="92.0" prefHeight="19.0" prefWidth="39.0" style="-fx-background-color: #F5F2E7;">
                      <font>

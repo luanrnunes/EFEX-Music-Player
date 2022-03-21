@@ -115,7 +115,11 @@ public class MainViewController implements Initializable {
 	
 	private Timer timer;
 	
+	private Timer timer2;
+	
 	private TimerTask task;
+	
+	private TimerTask task2;
 	
 	private String repeatSong;
 	
@@ -124,6 +128,7 @@ public class MainViewController implements Initializable {
 	private double end;
 	
 	private boolean isRunning;
+	
 
 	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
 	
@@ -258,14 +263,10 @@ public class MainViewController implements Initializable {
 
 	@FXML
 	public void onbtPlayButtonAction() {
-		
 		if (mediaPlayer != null) {
 			actionStatus.setTextFill(Color.web("#000dff"));
 			actionStatus.setText("Now playing: " + selectedFile.getName());
 			mediaPlayer.play();
-			dbCurrent = Double.toString(current);
-			dbEnd = Double.toString(end);
-			mediaTime.setText(dbCurrent+" / " + dbEnd);
 			
 
 			
@@ -289,9 +290,6 @@ public class MainViewController implements Initializable {
 				startTimer();
 				onSpeedSetter(null);
 				
-				dbCurrent = Double.toString(current);
-				dbEnd = Double.toString(end);
-				mediaTime.setText(dbCurrent+" / " + dbEnd);
 				}
 				
 				try {
@@ -356,6 +354,7 @@ public class MainViewController implements Initializable {
 		try {
 			fullPath = selectedFile.getCanonicalPath();
 			System.out.println("The actual song is: "+fullPath);
+			media = new Media(new File(fullPath).toURI().toString());
 
 		} catch (IOException e) {
 
@@ -364,6 +363,13 @@ public class MainViewController implements Initializable {
 
 		if (selectedFile != null) {
 			actionStatus.setText("Now playing: " + selectedFile.getName());
+			try {
+				mediaPlayer.stop();
+				fullPath = selectedFile.getCanonicalPath();
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else {
 			actionStatus.setTextFill(Color.web("#FF0000"));
 			actionStatus.setText("File selection cancelled.");
@@ -501,6 +507,8 @@ public class MainViewController implements Initializable {
 	public void startTimer() {
 		
 		 timer = new Timer();
+		 
+		 timer2 = new Timer();
 		
 		task = new TimerTask() {
 			
@@ -509,9 +517,6 @@ public class MainViewController implements Initializable {
 				isRunning = true;
 				current = mediaPlayer.getCurrentTime().toSeconds();
 				end = media.getDuration().toSeconds();
-				System.out.println(current/end);
-				System.out.println("current: "+current);
-				System.out.println("end: "+end);
 				songProgressBar.setProgress(current/end);
 				
 				
@@ -557,7 +562,23 @@ public class MainViewController implements Initializable {
 			}
 		};
 		
+		task2 = new TimerTask() {
+
+			@Override
+			@FXML
+			public void run() {
+				current = mediaPlayer.getCurrentTime().toSeconds();
+				end = media.getDuration().toSeconds();
+				mediaTime.setText(current+" / " + end);
+				System.out.println("task2: "+current+" / " + end);
+				
+			}
+			
+		};
+		
 		timer.scheduleAtFixedRate(task, 0, 1000);
+		timer2.scheduleAtFixedRate(task2, 0, 1500);
+	
 	}
 	
 	@FXML
