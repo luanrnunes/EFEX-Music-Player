@@ -263,6 +263,7 @@ public class MainViewController implements Initializable {
 
 	@FXML
 	public void onbtPlayButtonAction() {
+		
 		if (mediaPlayer != null) {
 			actionStatus.setTextFill(Color.web("#000dff"));
 			actionStatus.setText("Now playing: " + selectedFile.getName());
@@ -291,7 +292,8 @@ public class MainViewController implements Initializable {
 				onSpeedSetter(null);
 				
 				}
-				
+				dbCurrent = Double.toString(current);
+				dbEnd = Double.toString(end);
 				try {
 					Songdata dt = new Songdata(selectedFile.getName(), dbEnd.toString(),fullPath, dtf.format(now));
 					EfexDAO efexDao = new EfexDAO(dao.DB.getConnection());
@@ -508,8 +510,6 @@ public class MainViewController implements Initializable {
 		
 		 timer = new Timer();
 		 
-		 timer2 = new Timer();
-		
 		task = new TimerTask() {
 			
 			public void run () {
@@ -562,23 +562,27 @@ public class MainViewController implements Initializable {
 			}
 		};
 		
+
+		timer.scheduleAtFixedRate(task, 0, 1000);
+		
+	
+	}
+	
+	@FXML
+	public void startTimer2() {
+		timer2 = new Timer();
 		task2 = new TimerTask() {
 
 			@Override
-			@FXML
 			public void run() {
 				current = mediaPlayer.getCurrentTime().toSeconds();
 				end = media.getDuration().toSeconds();
 				mediaTime.setText(current+" / " + end);
 				System.out.println("task2: "+current+" / " + end);
-				
 			}
 			
 		};
-		
-		timer.scheduleAtFixedRate(task, 0, 1000);
-		timer2.scheduleAtFixedRate(task2, 0, 1500);
-	
+		timer2.scheduleAtFixedRate(task2, 0, 1000);
 	}
 	
 	@FXML
