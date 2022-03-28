@@ -2,6 +2,7 @@ package gui;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -96,6 +97,8 @@ public class MainViewController implements Initializable {
 	private Boolean repeatState = false;
 
 	private String fullPath;
+	
+	private URI fullPathUri;
 
 	private MediaPlayer mediaPlayer;
 
@@ -122,6 +125,8 @@ public class MainViewController implements Initializable {
 	private TimerTask task2;
 	
 	private String repeatSong;
+	
+	private URI repeatSongUri;
 	
 	private double current;
 	
@@ -352,9 +357,11 @@ public class MainViewController implements Initializable {
 		FileChooser fileChooser = new FileChooser();
 		selectedFile = fileChooser.showOpenDialog(null);
 		repeatSong = fullPath;
+		repeatSongUri = fullPathUri;
 		System.out.println("The song for repeat is: "+ repeatSong);
 		try {
 			fullPath = selectedFile.getCanonicalPath();
+			fullPathUri = selectedFile.toURI();
 			System.out.println("The actual song is: "+fullPath);
 			media = new Media(new File(fullPath).toURI().toString());
 
@@ -524,28 +531,30 @@ public class MainViewController implements Initializable {
 					
 					System.out.println("Entrou na condicao de fim de musica");
 					stopTimer();
-					while (repeatState == true && setTimesRepeat() != null) {
+					if (repeatState == true && setTimesRepeat() != null) {
 						if (repeatSong == null) {
 							for (int i=0; i<=setTimesRepeat(); i++)
-							{
-							media = new Media(new File(fullPath).toURI().toString());
-							mediaPlayer = new MediaPlayer(media);
-							mediaPlayer.play();
-							try {
-								mediaPlayer.wait();
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							
-						}
+							mediaPlayer.getClass().getResource(fullPathUri.toString());
+							 MediaPlayer a =new MediaPlayer(new Media(fullPathUri.toString()));
+							 a.setOnEndOfMedia(new Runnable() {
+							       public void run() {
+							         a.seek(Duration.ZERO);
+							       }
+							   });
+							  a.play();
 						
-					} else {
-						for (int i=0; i<=setTimesRepeat(); i++)
-						{
-						media = new Media(new File(repeatSong).toURI().toString());
-						mediaPlayer = new MediaPlayer(media);
-						mediaPlayer.play();
+					} 
+						else {
+						if (repeatSong == null) {
+							for (int i=0; i<=setTimesRepeat(); i++)
+							mediaPlayer.getClass().getResource(repeatSongUri.toString());
+							 MediaPlayer a =new MediaPlayer(new Media(repeatSong.toString()));
+							 a.setOnEndOfMedia(new Runnable() {
+							       public void run() {
+							         a.seek(Duration.ZERO);
+							       }
+							   });
+							  a.play();
 						try {
 							mediaPlayer.wait();
 						} catch (InterruptedException e) {
@@ -554,7 +563,8 @@ public class MainViewController implements Initializable {
 						}
 						}
 					}
-					
+						
+				
 				}
 					
 				}
