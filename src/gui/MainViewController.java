@@ -12,10 +12,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
 
+
 import application.Main;
 import dao.EfexDAO;
 import dao.Songdata;
 import gui.util.Alerts;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -269,10 +271,13 @@ public class MainViewController implements Initializable {
 	@FXML
 	public void onbtPlayButtonAction() {
 		
+		
 		if (mediaPlayer != null) {
 			actionStatus.setTextFill(Color.web("#000dff"));
 			actionStatus.setText("Now playing: " + selectedFile.getName());
 			mediaPlayer.play();
+			startTimer();
+			startTimer2();
 			
 
 			
@@ -292,8 +297,9 @@ public class MainViewController implements Initializable {
 				selectedAudio = fullPath;
 				
 				actionStatus.setText("Now playing: " + selectedFile.getName());
-
+				
 				startTimer();
+				startTimer2();
 				onSpeedSetter(null);
 				
 				}
@@ -333,6 +339,7 @@ public class MainViewController implements Initializable {
 	public void onbtStopButtonAction() {
 		
 		stopTimer();
+		stopTimer2();
 		mediaPlayer.stop();
 		mediaTime.setText((mediaPlayer.getCurrentTime()+" / "+mediaPlayer.getCycleDuration()));
 		actionStatus.setTextFill(Color.web("#FF0000"));
@@ -374,9 +381,21 @@ public class MainViewController implements Initializable {
 			actionStatus.setText("Now playing: " + selectedFile.getName());
 			try {
 				mediaPlayer.stop();
-				fullPath = selectedFile.getCanonicalPath();
+				mediaPlayer.dispose();
+				media = new Media(new File(fullPath).toURI().toString());
+				mediaPlayer = new MediaPlayer(media);
+				mediaPlayer.play();
+				mediaPlayer.setVolume(volumeSlider.getValue() * 0.01);
+				actionStatus.setTextFill(Color.web("#000dff"));
+				selectedAudio = fullPath;
 				
-			} catch (IOException e) {
+				actionStatus.setText("Now playing: " + selectedFile.getName());
+
+				startTimer();
+				startTimer2();
+				onSpeedSetter(null);
+				
+			} catch (RuntimeException e) {
 				e.printStackTrace();
 			}
 		} else {
@@ -446,6 +465,7 @@ public class MainViewController implements Initializable {
 			if(isRunning) {
 				
 				stopTimer();
+				stopTimer2();
 			}
 			
 			media = new Media(songs.get(songCounter).toURI().toString());
@@ -597,8 +617,16 @@ public class MainViewController implements Initializable {
 	
 	@FXML
 	public void stopTimer() {
-		timer = new Timer();
+		
 		timer.cancel();
+
+	}
+	
+	@FXML
+	public void stopTimer2() {
+
+		timer2.cancel();
+
 	}
 
 }

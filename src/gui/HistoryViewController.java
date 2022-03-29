@@ -111,7 +111,7 @@ public class HistoryViewController implements Initializable {
        /* table.getScene().getWindow().setWidth(table.getScene().getWidth() + 0.001); /*Refresh scene*/
         
         MainViewController mvc = new MainViewController();
-        
+        table.getScene().getWindow().hide();
         mvc.onMenuHistory();
 
         }
