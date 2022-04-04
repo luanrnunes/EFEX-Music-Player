@@ -146,4 +146,88 @@ public class EfexDAO {
 	
 	
 }
+	
+	public void deleteEqualizerData() {
+		PreparedStatement st = null;
+		
+		try {
+			st = conn.prepareStatement(
+					"delete from equalizer_data"
+					, Statement.RETURN_GENERATED_KEYS);
+		
+			int rowsAffected = st.executeUpdate();
+			
+			if (rowsAffected > 0) {
+				ResultSet rs = st.getGeneratedKeys();
+				System.out.println(rs);
+			}
+				
+				else {
+					throw new RuntimeException("Unexpected error! No rows affected");
+				}
+				
+				
+			}
+		
+	catch(SQLException e) {
+		throw new RuntimeException(e.getMessage());
+	}
+	finally {
+		DB.closeStatement(st);
+	}
+	
+}
+	
+	public Integer getEqualizerData_BassBoost() {
+		PreparedStatement st = null;
+	
+	try {
+		st = conn.prepareStatement(
+				"select bassBoostData from equalizer_data"
+				, Statement.RETURN_GENERATED_KEYS);
+	
+			ResultSet rs = st.executeQuery();
+			
+			while(rs.next()) {
+			Integer bassBoostValue = rs.getInt(1);
+			System.out.println("BassBoost= "+bassBoostValue);
+			return bassBoostValue;
+			}
+			
+			
+		}	catch(SQLException e) {
+			throw new RuntimeException(e.getMessage());
+			
+		}	finally {
+			DB.closeStatement(st);
+		}
+	return 0;	
+}
+	
+	public String getEqualizerData_Preset() {
+		PreparedStatement st = null;
+		
+	try {
+		st = conn.prepareStatement(
+				"select presetsData from equalizer_data"
+				, Statement.RETURN_GENERATED_KEYS);
+	
+			ResultSet rs = st.executeQuery();
+			
+			while(rs.next()) {
+			String presetValue = rs.getString(1);
+			System.out.println("BassBoost= "+presetValue);
+			return presetValue;
+			}
+			
+			
+		}	catch(SQLException e) {
+			throw new RuntimeException(e.getMessage());
+			
+		}	finally {
+			DB.closeStatement(st);
+		}
+	return null;
+	}
+	
 }

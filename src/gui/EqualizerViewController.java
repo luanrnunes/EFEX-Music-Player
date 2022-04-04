@@ -72,6 +72,20 @@ public class EqualizerViewController implements Initializable {
 			
 		});
 		
+    	Connection conn = DB.getConnection();
+    	EfexDAO efexdao = new EfexDAO(conn);
+    	int bb = efexdao.getEqualizerData_BassBoost();
+    	String pData = efexdao.getEqualizerData_Preset();
+    	
+    	System.out.println("Preset data from DB is: "+pData);
+    	
+    	if (bb==1) {
+    		bassBoostSelect.setSelected(true);;
+    	} else {
+    		bassBoostSelect.setSelected(false);
+    	}
+    	System.out.println("Database BB "+bb);
+		
 	}
 	
 	
@@ -108,6 +122,7 @@ public class EqualizerViewController implements Initializable {
         	Connection conn = DB.getConnection();
         	Equalizerdata EqData = new Equalizerdata(volBoostValue, bassBoostSelected, comboPresetValue);
         	EfexDAO efexdao = new EfexDAO(conn);
+        	efexdao.deleteEqualizerData();
         	efexdao.insertEqualizerData(EqData);
 	}
         else {
