@@ -230,4 +230,30 @@ public class EfexDAO {
 	return null;
 	}
 	
+	public Double getEqualizerData_volBoostData() {
+		PreparedStatement st = null;
+		
+	try {
+		st = conn.prepareStatement(
+				"select volBoostData from equalizer_data"
+				, Statement.RETURN_GENERATED_KEYS);
+	
+			ResultSet rs = st.executeQuery();
+			
+			while(rs.next()) {
+			Double volumeBoostValue = rs.getDouble(1);
+			System.out.println("BassBoost= "+volumeBoostValue);
+			return volumeBoostValue;
+			}
+			
+			
+		}	catch(SQLException e) {
+			throw new RuntimeException(e.getMessage());
+			
+		}	finally {
+			DB.closeStatement(st);
+		}
+	return 0.0;
+	}
+	
 }

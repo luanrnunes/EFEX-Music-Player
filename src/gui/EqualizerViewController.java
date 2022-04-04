@@ -38,7 +38,7 @@ public class EqualizerViewController implements Initializable {
 	@FXML
 	private String [] presets = {"Normal","Pop","Rock","Classical","Jazz"};
 	
-	double volBoostValue;
+	Double volBoostValue;
 	
 	String comboPresetValue;
 	
@@ -76,8 +76,11 @@ public class EqualizerViewController implements Initializable {
     	EfexDAO efexdao = new EfexDAO(conn);
     	int bb = efexdao.getEqualizerData_BassBoost();
     	String pData = efexdao.getEqualizerData_Preset();
+    	Double vlBoost = efexdao.getEqualizerData_volBoostData();
     	
-    	System.out.println("Preset data from DB is: "+pData);
+    	comboPresets.setValue(pData); /*Define o valor do preset atraves da base de dados*/
+    	
+    	volumeBoostSlider.setValue(vlBoost);
     	
     	if (bb==1) {
     		bassBoostSelect.setSelected(true);;
