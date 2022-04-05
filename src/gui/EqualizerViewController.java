@@ -80,14 +80,13 @@ public class EqualizerViewController implements Initializable {
     	
     	comboPresets.setValue(pData); /*Define o valor do preset atraves da base de dados*/
     	
-    	volumeBoostSlider.setValue(vlBoost);
+    	volumeBoostSlider.setValue(vlBoost); /*Define o valor do volume boost atraves da base de dados*/
     	
     	if (bb==1) {
     		bassBoostSelect.setSelected(true);;
     	} else {
     		bassBoostSelect.setSelected(false);
     	}
-    	System.out.println("Database BB "+bb);
 		
 	}
 	
@@ -130,9 +129,9 @@ public class EqualizerViewController implements Initializable {
 	}
         else {
         	Alert alertCancel = new Alert(AlertType.INFORMATION);
-        	alertCancel.setTitle("Action canceled");
+        	alertCancel.setTitle("Action aborted");
         	alertCancel.setHeaderText(null);
-        	alertCancel.setContentText("Action canceled, no changes were made");
+        	alertCancel.setContentText("Action aborted, no changes were made");
         	alertCancel.showAndWait();
         }
 

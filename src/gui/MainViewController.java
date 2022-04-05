@@ -446,6 +446,7 @@ public class MainViewController implements Initializable {
 			
 			if(isRunning) {
 				stopTimer();
+				stopTimer2();
 			}
 				
 			
@@ -455,6 +456,10 @@ public class MainViewController implements Initializable {
 			actionStatus.setText("Now Playing: " + songs.get(songCounter).getName());
 			
 			mediaPlayer.play();
+			
+			startTimer();
+			startTimer2();
+			
 		}
 		else {
 			
@@ -473,6 +478,10 @@ public class MainViewController implements Initializable {
 			
 			actionStatus.setText("Now playing: " + songs.get(songCounter).getName());
 			mediaPlayer.play();
+			
+			startTimer();
+			startTimer2();
+			
 		}
 		
 	}
@@ -490,6 +499,7 @@ public class MainViewController implements Initializable {
 			if(isRunning) {
 				
 				stopTimer();
+				stopTimer2();
 			}
 			
 			media = new Media(songs.get(songCounter).toURI().toString());
@@ -498,6 +508,10 @@ public class MainViewController implements Initializable {
 			actionStatus.setText("Now Playing: " + songs.get(songCounter).getName());
 			
 			mediaPlayer.play();
+			
+			startTimer();
+			startTimer2();
+			
 		}
 		else {
 			
@@ -510,11 +524,15 @@ public class MainViewController implements Initializable {
 				stopTimer();
 			}
 		
+			
 			media = new Media(songs.get(songCounter).toURI().toString());
 			mediaPlayer = new MediaPlayer(media);
 			
 			actionStatus.setText("Now Playing: " + songs.get(songCounter).getName());
 			mediaPlayer.play();
+			
+			startTimer();
+			startTimer2();
 		}
 		
 	}
