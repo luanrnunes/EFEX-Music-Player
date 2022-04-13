@@ -21,6 +21,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -44,10 +45,14 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 
-public class MainViewController implements Initializable {
+
+public class MainViewController  implements Initializable  {
 
 	@FXML
 	private MenuItem menuItemFile;
@@ -103,6 +108,8 @@ public class MainViewController implements Initializable {
 	
 	private Boolean repeatState = false;
 
+	private Boolean videoRunning = true;
+	
 	private String fullPath;
 	
 	private String videoPath;
@@ -547,6 +554,7 @@ public class MainViewController implements Initializable {
 	@FXML
 	public void onBtVideo () {
 		
+		
 		FileChooser fileChooser = new FileChooser();
 		selectedFile = fileChooser.showOpenDialog(null);
 		try {
@@ -564,17 +572,48 @@ public class MainViewController implements Initializable {
         
         MediaView mediaView = new MediaView(player);
 
-        root.getChildren().add( mediaView);
+        root.getChildren().add(mediaView);
 
-        Scene scene = new Scene(root, 1024, 768);
-
+        Scene scene = new Scene(root, 1280, 720);
+        
+        stage.initModality(Modality.APPLICATION_MODAL);
+        
         stage.setScene(scene);
         stage.show();
 
-        player.play();
+       player.play();
+       
+		dbCurrent = Double.toString(current);
+		dbEnd = Double.toString(end);
+		try {
+			Songdata dt = new Songdata(selectedFile.getName(), dbEnd.toString(),videoPath, dtf.format(now));
+			EfexDAO efexDao = new EfexDAO(dao.DB.getConnection());
+			efexDao.insert(dt);
+			System.out.println("Inserted! New ID = " + dt.getName());
+			
+			}catch(RuntimeException e) {
+				e.printStackTrace();	
+			}
+       
+      videoRunning = true;
+       
+       stage.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+    	    public void handle(MouseEvent mouseEvent) {
+    	    	if(videoRunning == true) {
+    	        player.pause();
+    	        videoRunning = false;
+    	    }
+    	    else {
+    	    	player.play();
+    	    	videoRunning = true;
+    	    }}
+    	});
+       
 		
 	}
 	
+	
+
 	/*Listeners sao ActionEvent event*/
 	@FXML
 	public void onSpeedSetter(ActionEvent event) {
