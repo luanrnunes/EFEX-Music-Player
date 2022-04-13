@@ -71,7 +71,7 @@
                         <Font size="20.0" />
                      </font>
                   </Button>
-                  <Button id="playListButton" fx:id="playListButton" layoutX="14.0" layoutY="13.0" mnemonicParsing="false" onAction="#onbtPlaylistAction" prefHeight="46.0" prefWidth="90.0" style="-fx-background-color: gray;" text="Open..." />
+                  <Button id="playListButton" fx:id="playListButton" layoutX="14.0" layoutY="13.0" mnemonicParsing="false" onAction="#onbtPlaylistAction" prefHeight="25.0" prefWidth="126.0" style="-fx-background-color: gray;" text="Select a song..." />
                   <Button id="pauseButton" fx:id="pauseButton" layoutX="245.0" layoutY="275.0" mnemonicParsing="false" onAction="#pauseButtonAction" prefHeight="46.0" prefWidth="81.0" style="-fx-background-color: #F5F2E7;" text="PAUSE" textFill="#a2a418" />
                   <Button id="previousButton" fx:id="prevButton" layoutX="302.0" layoutY="207.0" mnemonicParsing="false" onAction="#onBtPrevious" prefHeight="44.0" prefWidth="67.0" style="-fx-background-color: #F5F2E7;" text="&lt;&lt;" />
                   <Button id="resetButton" fx:id="nextButton" layoutX="383.0" layoutY="207.0" mnemonicParsing="false" onAction="#onBtNext" prefHeight="44.0" prefWidth="66.0" style="-fx-background-color: #F5F2E7;" text="&gt;&gt;" />
@@ -82,6 +82,7 @@
                      </font>
                   </Label>
                   <ComboBox fx:id="speedSelector" layoutX="495.0" layoutY="156.0" prefHeight="45.0" prefWidth="110.0" promptText="         SPEED" style="-fx-background-color: #F5F2E7;" />
+                  <Button fx:id="videoButton" layoutX="531.0" layoutY="14.0" mnemonicParsing="false" onAction="#onBtVideo" prefHeight="25.0" prefWidth="112.0" style="-fx-background-color: #FFFBE7;" text="Select a video..." />
                </children>
             </AnchorPane>
          </children>

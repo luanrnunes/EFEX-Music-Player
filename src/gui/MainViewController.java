@@ -37,9 +37,11 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -62,6 +64,9 @@ public class MainViewController implements Initializable {
 	@FXML
 	private Button prevButton;
 
+	@FXML
+	private Button videoButton;
+	
 	@FXML
 	private Stage stage;
 
@@ -99,6 +104,8 @@ public class MainViewController implements Initializable {
 	private Boolean repeatState = false;
 
 	private String fullPath;
+	
+	private String videoPath;
 	
 	private URI fullPathUri;
 
@@ -534,6 +541,37 @@ public class MainViewController implements Initializable {
 			startTimer();
 			startTimer2();
 		}
+		
+	}
+	
+	@FXML
+	public void onBtVideo () {
+		
+		FileChooser fileChooser = new FileChooser();
+		selectedFile = fileChooser.showOpenDialog(null);
+		try {
+			videoPath = selectedFile.getCanonicalPath();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("The video selected is: "+ videoPath);
+		
+		Stage stage = new Stage();
+		
+        StackPane root = new StackPane();
+
+        MediaPlayer player = new MediaPlayer( new Media(new File(videoPath).toURI().toString()));
+        
+        MediaView mediaView = new MediaView(player);
+
+        root.getChildren().add( mediaView);
+
+        Scene scene = new Scene(root, 1024, 768);
+
+        stage.setScene(scene);
+        stage.show();
+
+        player.play();
 		
 	}
 	
