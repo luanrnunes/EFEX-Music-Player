@@ -48,6 +48,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
@@ -609,8 +610,24 @@ public class MainViewController  implements Initializable  {
     	    }}
     	});
        
-		
-	}
+       scene.setOnKeyPressed(f -> {
+    	    if (f.getCode() == KeyCode.F) {
+    	    	((Stage)mediaView.getScene().getWindow()).setFullScreen(true);
+    	    }
+    	});
+       
+       scene.setOnMouseClicked(new EventHandler<MouseEvent>() {
+    	    @Override
+    	    public void handle(MouseEvent mouseEvent) {
+    	        if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
+    	            if(mouseEvent.getClickCount() == 2){
+    	            	((Stage)mediaView.getScene().getWindow()).setFullScreen(true);
+    	            }
+    	        }
+    	    }
+       });
+       
+	};
 	
 	
 
