@@ -151,6 +151,8 @@ public class MainViewController  implements Initializable  {
 	
 	private boolean isRunning;
 	
+	private boolean isFullScreen;
+	
 
 	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
 	
@@ -580,6 +582,7 @@ public class MainViewController  implements Initializable  {
         stage.initModality(Modality.APPLICATION_MODAL);
         
         stage.setScene(scene);
+        stage.setTitle("EFEX Video Player - "+videoPath);
         stage.show();
 
        player.play();
@@ -597,6 +600,8 @@ public class MainViewController  implements Initializable  {
 			}
        
       videoRunning = true;
+      
+      isFullScreen = false;
        
        stage.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
     	    public void handle(MouseEvent mouseEvent) {
@@ -611,17 +616,27 @@ public class MainViewController  implements Initializable  {
     	});
        
        scene.setOnKeyPressed(f -> {
-    	    if (f.getCode() == KeyCode.F) {
+    	    if (f.getCode() == KeyCode.F && isFullScreen == false) {
     	    	((Stage)mediaView.getScene().getWindow()).setFullScreen(true);
+    	    	 isFullScreen = true;
     	    }
+    	    else if (f.getCode() == KeyCode.F && isFullScreen == true) {
+    	    	((Stage)mediaView.getScene().getWindow()).setFullScreen(false);
+   	    	 isFullScreen = false;
+   	    }
     	});
        
        scene.setOnMouseClicked(new EventHandler<MouseEvent>() {
     	    @Override
     	    public void handle(MouseEvent mouseEvent) {
     	        if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
-    	            if(mouseEvent.getClickCount() == 2){
+    	            if(mouseEvent.getClickCount() == 2 && isFullScreen == false){
     	            	((Stage)mediaView.getScene().getWindow()).setFullScreen(true);
+    	            	isFullScreen = true;
+    	            }
+    	            else if(mouseEvent.getClickCount() == 2 && isFullScreen == true){
+    	            	((Stage)mediaView.getScene().getWindow()).setFullScreen(false);
+    	            	isFullScreen = false;
     	            }
     	        }
     	    }
