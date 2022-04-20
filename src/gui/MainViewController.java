@@ -32,6 +32,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
@@ -48,6 +49,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -152,6 +154,8 @@ public class MainViewController  implements Initializable  {
 	private boolean isRunning;
 	
 	private boolean isFullScreen;
+	
+	
 	
 
 	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
@@ -581,6 +585,33 @@ public class MainViewController  implements Initializable  {
         
         stage.initModality(Modality.APPLICATION_MODAL);
         
+        ContextMenu contextMenu = new ContextMenu();
+        //Creating the menu Items for the context menu
+        MenuItem item1 = new MenuItem("Copy");
+        MenuItem item2 = new MenuItem("remove");
+        contextMenu.getItems().addAll(item1, item2);
+        
+        // Create a label that will report the selection.
+        Label response;
+        response = new Label("Menu Demo");
+
+        // Create the context menu items
+        MenuItem ff5 = new MenuItem("Fast Forward + 10s");
+        MenuItem rw5 = new MenuItem("Rewind - 10s");
+        MenuItem paste = new MenuItem("Paste");
+
+        // Create a context (i.e., popup) menu that shows edit options.
+        final ContextMenu editMenu = new ContextMenu(ff5, rw5, paste);
+
+     // Add the context menu to the entire scene graph.
+        root.setOnContextMenuRequested(
+                    new EventHandler<ContextMenuEvent>() {
+          public void handle(ContextMenuEvent ae) {
+            // Popup menu at the location of the right click.
+            editMenu.show(root, ae.getScreenX(), ae.getScreenY());
+          }
+        });
+        
         stage.setScene(scene);
         stage.setTitle("EFEX Video Player - "+videoPath);
         stage.show();
@@ -605,9 +636,12 @@ public class MainViewController  implements Initializable  {
        
        stage.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
     	    public void handle(MouseEvent mouseEvent) {
+    	    	
+    	    	editMenu.hide();
+    	    	
     	    	if(videoRunning == true) {
     	        player.pause();
-    	        videoRunning = false;
+    	        videoRunning = false;	        
     	    }
     	    else {
     	    	player.play();
@@ -641,6 +675,9 @@ public class MainViewController  implements Initializable  {
     	        }
     	    }
        });
+       
+
+
        
 	};
 	
