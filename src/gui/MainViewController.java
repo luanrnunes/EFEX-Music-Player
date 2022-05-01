@@ -113,6 +113,8 @@ public class MainViewController  implements Initializable  {
 
 	private Boolean videoRunning = true;
 	
+	private Boolean isMuted = false;
+	
 	private String fullPath;
 	
 	private String videoPath;
@@ -147,7 +149,11 @@ public class MainViewController  implements Initializable  {
 	
 	private URI repeatSongUri;
 	
+	private  double playTime;
+	
 	private double current;
+	
+	private double videoCurrent;
 	
 	private double end;
 	
@@ -155,6 +161,8 @@ public class MainViewController  implements Initializable  {
 	
 	private boolean isFullScreen;
 	
+    
+   private MediaView mediaView; 
 	
 	
 
@@ -574,23 +582,19 @@ public class MainViewController  implements Initializable  {
 		Stage stage = new Stage();
 		
         StackPane root = new StackPane();
-
-        MediaPlayer player = new MediaPlayer( new Media(new File(videoPath).toURI().toString()));
         
-        MediaView mediaView = new MediaView(player);
+        media = new Media( new File(videoPath).toURI().toString());
+
+        mediaPlayer = new MediaPlayer( new Media(new File(videoPath).toURI().toString()));
+        
+        mediaView = new MediaView(mediaPlayer);
 
         root.getChildren().add(mediaView);
         
-               
-        try {
-			Thread.sleep(3 * 1000);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+        dbCurrent = Double.toString(current);
+		dbEnd = Double.toString(end);
         
-        Duration playTime = player.getCurrentTime();
-
+        
         Scene scene = new Scene(root, 1280, 720);
         
         stage.initModality(Modality.APPLICATION_MODAL);
@@ -610,10 +614,18 @@ public class MainViewController  implements Initializable  {
         // Create the context menu items
         MenuItem ff10 = new MenuItem("Fast Forward + 10s");
         MenuItem rw10 = new MenuItem("Rewind - 10s");
+        MenuItem ff30 = new MenuItem("Fast Forward + 30s");
+        MenuItem rw30 = new MenuItem("Rewind - 30s");
+        MenuItem a0 = new MenuItem("Normal Speed");
+        MenuItem a15x = new MenuItem("Accelarate 1.5x");
+        MenuItem a20x = new MenuItem("Accelarate 2.0x");;
+        MenuItem a05x = new MenuItem("Slow Down 0.5x");
+        MenuItem a02x = new MenuItem("Slow Down 0.25x");
         MenuItem reset = new MenuItem("Reset");
+        MenuItem muteVideo = new MenuItem("Mute");
 
         // Create a context (i.e., popup) menu that shows edit options.
-        final ContextMenu editMenu = new ContextMenu(ff10, rw10, reset);
+        final ContextMenu editMenu = new ContextMenu(ff10, rw10,ff30,rw30,a0,a15x,a20x,a05x,a02x ,reset, muteVideo);
 
      // Add the context menu to the entire scene graph.
         root.setOnContextMenuRequested(
@@ -630,10 +642,12 @@ public class MainViewController  implements Initializable  {
         stage.setTitle("EFEX Video Player - "+videoPath);
         stage.show();
 
-       player.play();
-       
-		dbCurrent = Double.toString(current);
-		dbEnd = Double.toString(end);
+       mediaPlayer.play();
+	      
+	       playTime = current;
+	       startTimer2();
+
+		
 		try {
 			Songdata dt = new Songdata(selectedFile.getName(), dbEnd.toString(),videoPath, dtf.format(now));
 			EfexDAO efexDao = new EfexDAO(dao.DB.getConnection());
@@ -654,11 +668,11 @@ public class MainViewController  implements Initializable  {
     	    	editMenu.hide();
     	    	
     	    	if(videoRunning == true) {
-    	        player.pause();
+    	        mediaPlayer.pause();
     	        videoRunning = false;	        
     	    }
     	    else {
-    	    	player.play();
+    	    	mediaPlayer.play();
     	    	videoRunning = true;
     	    }}
     	});
@@ -672,6 +686,17 @@ public class MainViewController  implements Initializable  {
     	    	((Stage)mediaView.getScene().getWindow()).setFullScreen(false);
    	    	 isFullScreen = false;
    	    }
+    	           
+    	       /*try {
+    		Thread.sleep(2 * 1000);
+    	} catch (InterruptedException e1) {
+    		// TODO Auto-generated catch block
+    		e1.printStackTrace();
+    	}*/
+    	       
+
+        		
+    	    
     	});
        
        scene.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -692,21 +717,70 @@ public class MainViewController  implements Initializable  {
        
        ff10.setOnAction(new EventHandler<ActionEvent>() {
            public void handle(ActionEvent t) {
-        	   player.seek(Duration.seconds(+10));
+        	   mediaPlayer.seek(Duration.seconds(playTime+10));
+        	   System.out.println("Playtime: " +playTime);
+        	   mediaPlayer.play();
              
            }
+           
+       });
+       
+       rw10.setOnAction(new EventHandler<ActionEvent>() {
+           public void handle(ActionEvent t) {
+        	   mediaPlayer.seek(Duration.seconds(playTime-10));
+        	   System.out.println("Playtime: " +playTime);
+        	   mediaPlayer.play();
+             
+           }
+           
+       });
+       
+       ff30.setOnAction(new EventHandler<ActionEvent>() {
+           public void handle(ActionEvent t) {
+        	   mediaPlayer.seek(Duration.seconds(playTime+30));
+        	   System.out.println("Playtime: " +playTime);
+        	   mediaPlayer.play();
+             
+           }
+           
+       });
+       
+       rw30.setOnAction(new EventHandler<ActionEvent>() {
+           public void handle(ActionEvent t) {
+        	   mediaPlayer.seek(Duration.seconds(playTime-30));
+        	   System.out.println("Playtime: " +playTime);
+        	   mediaPlayer.play();
+             
+           }
+           
+       });
+       
+       muteVideo.setOnAction(new EventHandler<ActionEvent>() {
+           public void handle(ActionEvent t) {
+        	   if(isMuted == false) {
+              mediaPlayer.setVolume(0);
+              isMuted = true;
+        	   } else {
+        		   isMuted = false;
+        		   mediaPlayer.setVolume(100);
+        	   }
+           }
+           
+           
            
        });
        
        reset.setOnAction(new EventHandler<ActionEvent>() {
            public void handle(ActionEvent t) {
-              player.seek(Duration.seconds(0));
+              mediaPlayer.seek(Duration.seconds(0));
+              mediaPlayer.play();
              
            }
            
+           
+           
        });
-       
-
+          
        
 	};
 	
@@ -738,8 +812,6 @@ public class MainViewController  implements Initializable  {
 				current = mediaPlayer.getCurrentTime().toSeconds();
 				end = media.getDuration().toSeconds();
 				songProgressBar.setProgress(current/end);
-				
-				
 				if(current == end) {
 					
 					System.out.println("Entrou na condicao de fim de musica");
@@ -801,7 +873,9 @@ public class MainViewController  implements Initializable  {
 				current = mediaPlayer.getCurrentTime().toSeconds();
 				end = media.getDuration().toSeconds();
 				mediaTime.setText(current+" / " + end);
+				playTime = current;
 				System.out.println("task2: "+current+" / " + end);
+				
 			}
 			
 		};
