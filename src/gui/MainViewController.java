@@ -580,6 +580,16 @@ public class MainViewController  implements Initializable  {
         MediaView mediaView = new MediaView(player);
 
         root.getChildren().add(mediaView);
+        
+               
+        try {
+			Thread.sleep(3 * 1000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        
+        Duration playTime = player.getCurrentTime();
 
         Scene scene = new Scene(root, 1280, 720);
         
@@ -591,17 +601,19 @@ public class MainViewController  implements Initializable  {
         MenuItem item2 = new MenuItem("remove");
         contextMenu.getItems().addAll(item1, item2);
         
+        
+        
         // Create a label that will report the selection.
         Label response;
-        response = new Label("Menu Demo");
+        response = new Label("Video Menu");
 
         // Create the context menu items
-        MenuItem ff5 = new MenuItem("Fast Forward + 10s");
-        MenuItem rw5 = new MenuItem("Rewind - 10s");
-        MenuItem paste = new MenuItem("Paste");
+        MenuItem ff10 = new MenuItem("Fast Forward + 10s");
+        MenuItem rw10 = new MenuItem("Rewind - 10s");
+        MenuItem reset = new MenuItem("Reset");
 
         // Create a context (i.e., popup) menu that shows edit options.
-        final ContextMenu editMenu = new ContextMenu(ff5, rw5, paste);
+        final ContextMenu editMenu = new ContextMenu(ff10, rw10, reset);
 
      // Add the context menu to the entire scene graph.
         root.setOnContextMenuRequested(
@@ -609,9 +621,11 @@ public class MainViewController  implements Initializable  {
           public void handle(ContextMenuEvent ae) {
             // Popup menu at the location of the right click.
             editMenu.show(root, ae.getScreenX(), ae.getScreenY());
+            
           }
         });
         
+
         stage.setScene(scene);
         stage.setTitle("EFEX Video Player - "+videoPath);
         stage.show();
@@ -676,7 +690,22 @@ public class MainViewController  implements Initializable  {
     	    }
        });
        
-
+       ff10.setOnAction(new EventHandler<ActionEvent>() {
+           public void handle(ActionEvent t) {
+        	   player.seek(Duration.seconds(+10));
+             
+           }
+           
+       });
+       
+       reset.setOnAction(new EventHandler<ActionEvent>() {
+           public void handle(ActionEvent t) {
+              player.seek(Duration.seconds(0));
+             
+           }
+           
+       });
+       
 
        
 	};
