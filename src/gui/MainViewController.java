@@ -604,6 +604,7 @@ public class MainViewController  implements Initializable  {
         MenuItem item1 = new MenuItem("Copy");
         MenuItem item2 = new MenuItem("remove");
         contextMenu.getItems().addAll(item1, item2);
+        contextMenu.styleProperty().setValue("-fx-background-color:  #F7CCAC");
         
         
         
@@ -626,6 +627,7 @@ public class MainViewController  implements Initializable  {
 
         // Create a context (i.e., popup) menu that shows edit options.
         final ContextMenu editMenu = new ContextMenu(ff10, rw10,ff30,rw30,a0,a15x,a20x,a05x,a02x ,reset, muteVideo);
+        editMenu.styleProperty().setValue("-fx-background-color:  #F7CCAC");
 
      // Add the context menu to the entire scene graph.
         root.setOnContextMenuRequested(
@@ -764,9 +766,42 @@ public class MainViewController  implements Initializable  {
         		   isMuted = false;
         		   mediaPlayer.setVolume(100);
         	   }
-           }
+           }      
            
+       });
+       
+       a0.setOnAction(new EventHandler<ActionEvent>() {
+           public void handle(ActionEvent t) {
+        	   mediaPlayer.setRate(1);
+           }   
            
+       });
+       
+       a15x.setOnAction(new EventHandler<ActionEvent>() {
+           public void handle(ActionEvent t) {
+        	   mediaPlayer.setRate(1.5);
+           }   
+           
+       });
+       
+       a20x.setOnAction(new EventHandler<ActionEvent>() {
+           public void handle(ActionEvent t) {
+        	   mediaPlayer.setRate(2);
+           }   
+           
+       });
+       
+       a02x.setOnAction(new EventHandler<ActionEvent>() {
+           public void handle(ActionEvent t) {
+        	   mediaPlayer.setRate(0.2);
+           }   
+           
+       });
+       
+       a05x.setOnAction(new EventHandler<ActionEvent>() {
+           public void handle(ActionEvent t) {
+        	   mediaPlayer.setRate(0.5);
+           }   
            
        });
        
